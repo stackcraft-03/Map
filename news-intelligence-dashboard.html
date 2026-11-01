@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SignalMap | News & Social Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root{
+  --bg:#071013; --surface:#0b171c; --surface-2:#0e1d24; --surface-3:#122630;
+  --primary:#0C9EFF; --primary-soft:rgba(12,158,255,.13); --primary-border:rgba(12,158,255,.32);
+  --text:#eaf3f8; --muted:#91a5b1; --subtle:#607783; --line:#1b303a;
+  --red:#ff657a; --amber:#f7bd58; --green:#45d6a2; --purple:#b69aff;
+  --shadow:0 16px 40px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{height:100%;display:flex;flex-direction:column;min-height:0;background:radial-gradient(ellipse at 76% 0%,rgba(12,158,255,.08),transparent 36%),var(--bg)}
+.topbar{height:68px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--line);background:rgba(7,16,19,.92);position:relative;z-index:20}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}.brand-mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,#0C9EFF,#0871c7);display:grid;place-items:center;color:white;font:800 17px Manrope;box-shadow:0 7px 20px rgba(12,158,255,.22)}
+.brand-name{font:800 16px Manrope;letter-spacing:-.4px}.brand-name span{color:var(--primary)}.brand-sub{font-size:9px;letter-spacing:1.35px;color:var(--muted);margin-top:3px}
+.top-meta{display:flex;align-items:center;gap:12px}.live-pill,.period-pill{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:20px;padding:7px 10px;font-size:10px;color:#b8cad3;background:var(--surface)}.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(69,214,162,.12)}.avatar{width:32px;height:32px;border:1px solid #28516a;background:#102b3c;color:#9bdcff;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700}
+.main{display:grid;grid-template-columns:minmax(420px,40%) minmax(0,60%);gap:0;flex:1;min-height:0}
+.left{min-width:0;min-height:0;display:flex;flex-direction:column;border-right:1px solid var(--line);background:rgba(8,19,24,.72)}
+.feed-head{height:65px;flex:none;padding:13px 17px 11px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:12px}.feed-heading{font:700 13px Manrope}.feed-sub{font-size:10px;color:var(--muted);margin-top:4px}.feed-count{font-size:10px;color:#9ecfeb;background:var(--primary-soft);border:1px solid var(--primary-border);border-radius:7px;padding:5px 8px;white-space:nowrap}
+.feeds{display:grid;grid-template-rows:1fr 1fr;min-height:0;flex:1}.feed-section{display:flex;flex-direction:column;min-height:0;overflow:hidden}.feed-section+ .feed-section{border-top:1px solid var(--line)}.section-top{padding:12px 16px 9px;flex:none}.section-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.section-title-wrap{display:flex;align-items:center;gap:8px}.section-icon{width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:var(--primary-soft);color:#69c5ff}.section-title{font:700 12px Manrope}.section-total{font-size:10px;color:var(--muted)}
+.category-row{display:flex;gap:5px;overflow-x:auto;padding:1px 0 3px;scrollbar-width:none}.category-row::-webkit-scrollbar{display:none}.chip{border:1px solid var(--line);background:var(--surface);color:#9bb0bc;border-radius:7px;padding:5px 9px;font-size:9px;white-space:nowrap;transition:.15s}.chip:hover{border-color:var(--primary-border);color:#d8efff}.chip.active{background:var(--primary-soft);border-color:var(--primary-border);color:#7dceff;font-weight:700}
+.cards{overflow-y:auto;min-height:0;padding:0 11px 12px;scrollbar-width:thin;scrollbar-color:#29414e transparent}.post-card{background:linear-gradient(145deg,rgba(15,31,39,.98),rgba(11,23,29,.98));border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin:0 5px 8px;transition:border-color .16s,transform .16s,background .16s;cursor:pointer;position:relative}.post-card:hover{border-color:#28536b;transform:translateY(-1px);background:#10232c}.post-card.selected{border-color:var(--primary);box-shadow:0 0 0 1px rgba(12,158,255,.12),0 8px 22px rgba(0,0,0,.16)}.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.source{font-size:9px;color:#8ccfff;font-weight:700;letter-spacing:.15px;display:flex;align-items:center;gap:6px;min-width:0}.source-mark{width:17px;height:17px;display:grid;place-items:center;background:#123448;border:1px solid #1c4c68;color:#8bd4ff;border-radius:5px;font-size:8px;flex:none}.post-time{font-size:9px;color:#6f8794;white-space:nowrap}.headline{font:700 12px/1.42 Manrope;color:#e7f1f6;margin:0 0 5px}.post-content{font-size:10px;line-height:1.55;color:#9aadb8;margin:0}.card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}.country-tags{display:flex;gap:4px;flex-wrap:wrap;min-width:0}.country-tag{font-size:8px;color:#9ccde8;background:#102a38;border:1px solid #1b4055;border-radius:5px;padding:3px 6px}.category-label{font-size:8px;color:#8297a3;text-transform:uppercase;letter-spacing:.65px;white-space:nowrap}.tweet-handle{color:#c1d7e3;font-size:9px;font-weight:700;margin-bottom:5px}.tweet-handle span{color:#66818f;font-weight:500}.empty{padding:25px 14px;text-align:center;color:#8095a1;font-size:11px;line-height:1.55}.empty strong{display:block;color:#c7d8e1;margin-bottom:3px}
+.right{position:relative;min-width:0;min-height:0;display:flex;flex-direction:column;background:#081218}.map-toolbar{height:65px;flex:none;padding:11px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:rgba(9,21,27,.94);z-index:5}.map-title{font:700 13px Manrope}.map-caption{font-size:10px;color:var(--muted);margin-top:4px}.map-controls{display:flex;align-items:center;gap:7px}.map-btn{padding:7px 10px;border:1px solid var(--line);background:#0d1c23;color:#a9bdc8;border-radius:7px;font-size:9px}.map-btn:hover{border-color:var(--primary-border);color:#d8efff}.map-btn.primary{background:var(--primary-soft);border-color:var(--primary-border);color:#8bd3ff}
+.map-wrap{position:relative;flex:1;min-height:0}#map{height:100%;width:100%;background:#0b161c}.map-overlay{position:absolute;z-index:500;top:14px;left:14px;width:195px;border:1px solid #263f4b;background:rgba(8,20,26,.92);backdrop-filter:blur(14px);border-radius:10px;padding:11px 12px;box-shadow:var(--shadow);pointer-events:none}.overlay-kicker{font:700 10px Manrope;margin-bottom:4px}.overlay-copy{font-size:9px;color:#8fa6b2;line-height:1.4}.legend{display:flex;gap:11px;flex-wrap:wrap;margin-top:10px}.legend-item{display:flex;align-items:center;gap:5px;color:#9aadb7;font-size:8px}.legend-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 3px rgba(12,158,255,.14)}.legend-dot.news{background:#0C9EFF}.legend-dot.tweets{background:#b69aff}
+.map-summary{position:absolute;z-index:500;bottom:15px;left:15px;display:flex;gap:8px;pointer-events:none}.summary-pill{background:rgba(8,20,26,.93);backdrop-filter:blur(12px);border:1px solid #263f4b;border-radius:9px;padding:9px 11px;min-width:105px;box-shadow:var(--shadow)}.summary-label{font-size:8px;color:#8ea3af}.summary-value{font:800 16px Manrope;margin-top:3px;color:#e9f5fb}.summary-value.blue{color:#62c2ff}.map-hint{position:absolute;z-index:500;right:15px;bottom:15px;background:rgba(8,20,26,.9);border:1px solid #263f4b;border-radius:8px;padding:8px 10px;font-size:9px;color:#8fa5b0;pointer-events:none}
+.leaflet-container{font-family:'DM Sans',sans-serif}.leaflet-control-zoom a{background:#10212a!important;color:#cfe4ef!important;border-color:#29424e!important}.leaflet-control-attribution{background:rgba(7,16,19,.78)!important;color:#708793!important;font-size:8px!important}.leaflet-control-attribution a{color:#65bfff!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0e1d24;color:#eaf3f8;border:1px solid #29424e;box-shadow:var(--shadow)}.leaflet-popup-content{font-family:'DM Sans',sans-serif;margin:12px 14px;font-size:11px}.popup-title{font:700 12px Manrope;margin-bottom:8px}.popup-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.popup-stat{background:#132832;border-radius:6px;padding:7px}.popup-stat b{display:block;font:700 14px Manrope;color:#6cc6ff}.popup-stat span{font-size:8px;color:#94aab6}.popup-action{font-size:9px;color:#78caff;margin-top:9px}
+.country-marker{background:transparent;border:0}.country-bubble{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(12,158,255,.24);border:1px solid rgba(67,183,255,.95);color:#dff4ff;font:800 10px Manrope;box-shadow:0 0 0 5px rgba(12,158,255,.10),0 0 22px rgba(12,158,255,.28);text-shadow:0 1px 3px #00131d}.country-bubble.active{background:rgba(12,158,255,.64);border:2px solid #d9f2ff;box-shadow:0 0 0 7px rgba(12,158,255,.18),0 0 28px rgba(12,158,255,.52)}.country-label{color:#d7eaf4;background:rgba(7,16,19,.82);border:1px solid #27404d;border-radius:4px;padding:2px 5px;font-size:8px;box-shadow:none}
+@media(max-width:980px){.main{grid-template-columns:minmax(360px,44%) minmax(0,56%)}.map-overlay{width:175px}.map-hint{display:none}}
+@media(max-width:720px){body{overflow:auto}.app{height:auto;min-height:100%;}.topbar{height:60px;padding:0 13px}.period-pill{display:none}.main{display:flex;flex-direction:column;min-height:0}.left{border-right:0;border-bottom:1px solid var(--line);height:760px;min-height:760px}.right{height:560px;min-height:560px}.feed-head,.map-toolbar{padding-left:13px;padding-right:13px}.feeds{grid-template-rows:1fr 1fr}.map-overlay{top:10px;left:10px}.map-summary{bottom:10px;left:10px}.summary-pill{min-width:88px;padding:7px 9px}.map-controls .map-btn{padding:7px 8px}}
+@media(max-width:420px){.brand-sub{font-size:8px}.live-pill{font-size:9px}.feed-head{height:60px}.map-caption{max-width:190px;line-height:1.35}.map-toolbar{align-items:flex-start}.map-controls{gap:4px}.map-btn{font-size:8px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div><div class="brand-name">Signal<span>Map</span></div><div class="brand-sub">NEWS & SOCIAL INTELLIGENCE</div></div>
+    </div>
+    <div class="top-meta">
+      <div class="period-pill">◷ &nbsp; Last 24 hours</div>
+      <div class="live-pill"><span class="live-dot"></span> Demo intelligence feed</div>
+      <div class="avatar">AN</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="left" aria-label="News and social feeds">
+      <div class="feed-head">
+        <div><div class="feed-heading">Global monitoring feeds</div><div class="feed-sub">News coverage and social conversation in one view</div></div>
+        <div class="feed-count" id="totalFeedCount">16 ITEMS</div>
+      </div>
+      <div class="feeds">
+        <section class="feed-section" aria-label="News feed">
+          <div class="section-top">
+            <div class="section-title-row"><div class="section-title-wrap"><div class="section-icon">▤</div><div class="section-title">News</div></div><div class="section-total" id="newsCount">08 stories</div></div>
+            <div class="category-row" id="newsFilters"></div>
+          </div>
+          <div class="cards" id="newsCards"></div>
+        </section>
+        <section class="feed-section" aria-label="Social media feed">
+          <div class="section-top">
+            <div class="section-title-row"><div class="section-title-wrap"><div class="section-icon" style="color:#c1aaff;background:rgba(182,154,255,.13)">＠</div><div class="section-title">Social / X</div></div><div class="section-total" id="tweetCount">08 posts</div></div>
+            <div class="category-row" id="tweetFilters"></div>
+          </div>
+          <div class="cards" id="tweetCards"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="right" aria-label="Country mention map">
+      <div class="map-toolbar">
+        <div><div class="map-title">Global mention map</div><div class="map-caption">Country markers represent mentions across news and social posts</div></div>
+        <div class="map-controls"><button class="map-btn" id="clearCountry">Clear selection</button><button class="map-btn primary" id="fitMap">⌖ &nbsp;Fit countries</button></div>
+      </div>
+      <div class="map-wrap">
+        <div id="map" aria-label="Interactive global map"></div>
+        <div class="map-overlay"><div class="overlay-kicker">Country mention activity</div><div class="overlay-copy">Select a country marker to inspect its coverage and filter both feeds.</div><div class="legend"><div class="legend-item"><span class="legend-dot news"></span>News</div><div class="legend-item"><span class="legend-dot tweets"></span>Social</div></div></div>
+        <div class="map-summary">
+          <div class="summary-pill"><div class="summary-label">Countries mentioned</div><div class="summary-value" id="countryTotal">10</div></div>
+          <div class="summary-pill"><div class="summary-label">Total country mentions</div><div class="summary-value blue" id="mentionTotal">32</div></div>
+        </div>
+        <div class="map-hint">Bubble size = total mentions · Click to filter feeds</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// DEMO CONTENT: replace with a news/social API when connecting a real ingestion pipeline.
+const news = [
+ {id:'N-001',category:'Politics',source:'Reuters',sourceMark:'R',published:'2026-10-31T10:25:00Z',headline:'Regional leaders call for renewed diplomatic talks',content:'Officials from several countries signaled support for renewed diplomatic engagement as international partners called for de-escalation and sustained dialogue.',countries:['Pakistan','India','United States'],tags:['Diplomacy','South Asia']},
+ {id:'N-002',category:'Economy',source:'Bloomberg',sourceMark:'B',published:'2026-10-31T09:40:00Z',headline:'Asian markets weigh trade outlook as currencies move',content:'Investors assessed changing trade expectations and currency movements across major Asian economies, with analysts watching policy signals from regional central banks.',countries:['China','Japan','India'],tags:['Markets','Trade']},
+ {id:'N-003',category:'Conflict',source:'Associated Press',sourceMark:'AP',published:'2026-10-31T08:55:00Z',headline:'Aid agencies warn of growing pressure on humanitarian routes',content:'Humanitarian organizations urged expanded access and better coordination as disruptions continue to affect the delivery of essential supplies to vulnerable communities.',countries:['Ukraine','Russia','United States'],tags:['Humanitarian','Security']},
+ {id:'N-004',category:'Technology',source:'The Verge',sourceMark:'V',published:'2026-10-31T08:10:00Z',headline:'Governments revisit AI rules as technology investment accelerates',content:'Policy makers are reviewing oversight frameworks while technology firms increase investment in artificial intelligence infrastructure and research partnerships.',countries:['United States','United Kingdom','China'],tags:['AI','Regulation']},
+ {id:'N-005',category:'Climate',source:'The Guardian',sourceMark:'G',published:'2026-10-31T07:35:00Z',headline:'Flood preparedness rises on agenda after severe weather warnings',content:'Regional authorities are reviewing emergency plans, drainage capacity and public information systems amid renewed concern over extreme weather events.',countries:['Pakistan','Bangladesh','India'],tags:['Weather','Preparedness']},
+ {id:'N-006',category:'Politics',source:'Al Jazeera',sourceMark:'AJ',published:'2026-10-31T06:50:00Z',headline:'European officials discuss security coordination and regional stability',content:'Ministers are expected to discuss cross-border coordination, economic resilience and diplomatic channels during a series of high-level meetings.',countries:['Germany','France','Ukraine'],tags:['Europe','Security']},
+ {id:'N-007',category:'Economy',source:'Financial Times',sourceMark:'FT',published:'2026-10-31T05:45:00Z',headline:'Energy market outlook shifts as supply discussions continue',content:'Energy analysts are tracking supply decisions and demand forecasts, with price expectations sensitive to developments across major producing and consuming countries.',countries:['United States','China','Saudi Arabia'],tags:['Energy','Trade']},
+ {id:'N-008',category:'Technology',source:'TechCrunch',sourceMark:'T',published:'2026-10-31T04:20:00Z',headline:'New cross-border technology partnerships target digital infrastructure',content:'Technology companies and public institutions are exploring new partnerships in cloud services, connectivity and digital skills development.',countries:['United Kingdom','Pakistan','United States'],tags:['Infrastructure','Startups']}
+];
+const tweets = [
+ {id:'X-001',category:'Politics',handle:'@GlobalBriefing',name:'Global Briefing',published:'2026-10-31T10:42:00Z',content:'Watching the diplomatic signals coming out of South Asia today. The next round of talks could be an important test of regional cooperation.',countries:['Pakistan','India'],tags:['Diplomacy']},
+ {id:'X-002',category:'Economy',handle:'@MarketPulse',name:'Market Pulse',published:'2026-10-31T09:58:00Z',content:'Asian currency and equity markets are moving on fresh trade outlooks. China, Japan and India remain key areas to watch this week.',countries:['China','Japan','India'],tags:['Markets']},
+ {id:'X-003',category:'Conflict',handle:'@ReliefMonitor',name:'Relief Monitor',published:'2026-10-31T09:15:00Z',content:'Humanitarian access remains a major concern. Aid groups are asking for predictable routes and stronger coordination for civilians.',countries:['Ukraine','Russia'],tags:['Humanitarian']},
+ {id:'X-004',category:'Technology',handle:'@AIFutures',name:'AI Futures',published:'2026-10-31T08:32:00Z',content:'The AI policy conversation is becoming more global. US, UK and Chinese approaches will shape how businesses navigate the next wave.',countries:['United States','United Kingdom','China'],tags:['AI']},
+ {id:'X-005',category:'Climate',handle:'@ClimateDesk',name:'Climate Desk',published:'2026-10-31T07:50:00Z',content:'Early warning systems and resilient infrastructure need to be part of the climate conversation across South Asia.',countries:['Pakistan','Bangladesh','India'],tags:['Climate']},
+ {id:'X-006',category:'Politics',handle:'@EuroObserver',name:'Euro Observer',published:'2026-10-31T07:08:00Z',content:'European security discussions are increasingly connected to long-term economic and energy resilience.',countries:['Germany','France','Ukraine'],tags:['Europe']},
+ {id:'X-007',category:'Economy',handle:'@EnergySignals',name:'Energy Signals',published:'2026-10-31T06:22:00Z',content:'Energy supply, shipping routes and demand projections are all in focus. Saudi Arabia, China and the US feature in the latest analysis.',countries:['Saudi Arabia','China','United States'],tags:['Energy']},
+ {id:'X-008',category:'Technology',handle:'@DigitalBridge',name:'Digital Bridge',published:'2026-10-31T05:16:00Z',content:'Exciting to see more discussion around digital infrastructure partnerships between Pakistan, the UK and technology companies abroad.',countries:['Pakistan','United Kingdom'],tags:['Infrastructure']}
+];
+
+const countryPoints = {
+ 'Pakistan':{lat:30.3753,lon:69.3451},'India':{lat:22.5,lon:79},'United States':{lat:39.5,lon:-98.35},
+ 'China':{lat:35.8,lon:103.8},'Japan':{lat:36.2,lon:138.2},'Ukraine':{lat:48.4,lon:31.2},
+ 'Russia':{lat:61,lon:95},'United Kingdom':{lat:54.5,lon:-3.2},'Bangladesh':{lat:23.7,lon:90.3},
+ 'Germany':{lat:51.1,lon:10.4},'France':{lat:46.2,lon:2.2},'Saudi Arabia':{lat:24,lon:45}
+};
+const categories = ['All','Politics','Economy','Conflict','Technology','Climate'];
+let newsCategory='All', tweetCategory='All', selectedCountry=null, selectedPost=null;
+const map=L.map('map',{zoomControl:true,scrollWheelZoom:true}).setView([25,15],2);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{subdomains:'abcd',maxZoom:18,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
+const markerLayer=L.layerGroup().addTo(map), markers={};
+const fmtDate=value=>new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'UTC',hour12:false}).format(new Date(value))+' UTC';
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const allCountries=()=>Object.keys(countryPoints);
+function visibleNews(){return news.filter(p=>(newsCategory==='All'||p.category===newsCategory)&&(!selectedCountry||p.countries.includes(selectedCountry)))}
+function visibleTweets(){return tweets.filter(p=>(tweetCategory==='All'||p.category===tweetCategory)&&(!selectedCountry||p.countries.includes(selectedCountry)))}
+function renderFilters(hostId,active,onSelect){document.getElementById(hostId).innerHTML=categories.map(c=>`<button class="chip ${active===c?'active':''}" data-category="${c}">${c}</button>`).join('');document.getElementById(hostId).querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>onSelect(btn.dataset.category)))}
+function renderNews(){const data=visibleNews();document.getElementById('newsCount').textContent=`${data.length} ${data.length===1?'story':'stories'}`;document.getElementById('newsCards').innerHTML=data.length?data.map(p=>`<article class="post-card ${selectedPost===p.id?'selected':''}" data-post="${p.id}" tabindex="0"><div class="card-top"><div class="source"><span class="source-mark">${escapeHtml(p.sourceMark)}</span>${escapeHtml(p.source)}</div><time class="post-time">${fmtDate(p.published)}</time></div><h3 class="headline">${escapeHtml(p.headline)}</h3><p class="post-content">${escapeHtml(p.content)}</p><div class="card-footer"><div class="country-tags">${p.countries.map(c=>`<span class="country-tag">${escapeHtml(c)}</span>`).join('')}</div><span class="category-label">${escapeHtml(p.category)}</span></div></article>`).join(''):'<div class="empty"><strong>No news stories found</strong>Try another category or clear the country selection.</div>';document.querySelectorAll('#newsCards .post-card').forEach(el=>{el.addEventListener('click',()=>selectPost(el.dataset.post));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPost(el.dataset.post)}})});renderFilters('newsFilters',newsCategory,v=>{newsCategory=v;selectedPost=null;renderAll()})}
+function renderTweets(){const data=visibleTweets();document.getElementById('tweetCount').textContent=`${data.length} ${data.length===1?'post':'posts'}`;document.getElementById('tweetCards').innerHTML=data.length?data.map(p=>`<article class="post-card ${selectedPost===p.id?'selected':''}" data-post="${p.id}" tabindex="0"><div class="card-top"><div class="source"><span class="source-mark" style="color:#c6b2ff;background:#251d3b;border-color:#44346c">X</span>Social post</div><time class="post-time">${fmtDate(p.published)}</time></div><div class="tweet-handle">${escapeHtml(p.name)} <span>${escapeHtml(p.handle)}</span></div><p class="post-content" style="color:#c2d0d8">${escapeHtml(p.content)}</p><div class="card-footer"><div class="country-tags">${p.countries.map(c=>`<span class="country-tag">${escapeHtml(c)}</span>`).join('')}</div><span class="category-label">${escapeHtml(p.category)}</span></div></article>`).join(''):'<div class="empty"><strong>No social posts found</strong>Try another category or clear the country selection.</div>';document.querySelectorAll('#tweetCards .post-card').forEach(el=>{el.addEventListener('click',()=>selectPost(el.dataset.post));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPost(el.dataset.post)}})});renderFilters('tweetFilters',tweetCategory,v=>{tweetCategory=v;selectedPost=null;renderAll()})}
+function countsByCountry(){const counts={};allCountries().forEach(c=>counts[c]={news:0,tweets:0,total:0});visibleNews().forEach(p=>p.countries.forEach(c=>{counts[c].news++;counts[c].total++}));visibleTweets().forEach(p=>p.countries.forEach(c=>{counts[c].tweets++;counts[c].total++}));return counts}
+function popupHtml(country,c){return `<div class="popup-title">${escapeHtml(country)}</div><div class="popup-stats"><div class="popup-stat"><b>${c.total}</b><span>Total mentions</span></div><div class="popup-stat"><b>${c.news}</b><span>News links</span></div><div class="popup-stat"><b>${c.tweets}</b><span>Social posts</span></div></div><div class="popup-action">Click marker to filter both feeds by this country.</div>`}
+function renderMap(){markerLayer.clearLayers();const counts=countsByCountry();let totalMentions=0,activeCountries=0;Object.entries(counts).forEach(([country,c])=>{if(!c.total)return;totalMentions+=c.total;activeCountries++;const p=countryPoints[country];const size=28+Math.min(c.total,8)*3.2;const icon=L.divIcon({className:'country-marker',html:`<div class="country-bubble ${selectedCountry===country?'active':''}">${c.total}</div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]});const marker=L.marker([p.lat,p.lon],{icon}).addTo(markerLayer);marker.bindTooltip(escapeHtml(country),{direction:'top',offset:[0,-size/2],className:'country-label'});marker.bindPopup(popupHtml(country,c));marker.on('click',()=>{selectedCountry=selectedCountry===country?null:country;selectedPost=null;renderAll()});markers[country]=marker;});document.getElementById('countryTotal').textContent=activeCountries;document.getElementById('mentionTotal').textContent=totalMentions;document.getElementById('totalFeedCount').textContent=`${visibleNews().length+visibleTweets().length} ITEMS`}
+function selectPost(id){selectedPost=selectedPost===id?null:id;const post=[...news,...tweets].find(p=>p.id===selectedPost);renderNews();renderTweets();renderMap();if(post){const first=post.countries[0];if(first&&countryPoints[first]){map.flyTo([countryPoints[first].lat,countryPoints[first].lon],Math.max(map.getZoom(),3),{duration:.55});const marker=markers[first];if(marker)marker.openPopup()}}}
+function renderAll(){renderNews();renderTweets();renderMap();document.getElementById('clearCountry').textContent=selectedCountry?`× ${selectedCountry}`:'Clear selection'}
+document.getElementById('clearCountry').addEventListener('click',()=>{selectedCountry=null;selectedPost=null;renderAll()});document.getElementById('fitMap').addEventListener('click',()=>{const pts=Object.values(countryPoints);map.fitBounds(L.latLngBounds(pts.map(p=>[p.lat,p.lon])).pad(.12))});
+renderAll();setTimeout(()=>map.invalidateSize(),150);
+</script>
+</body>
+</html>
