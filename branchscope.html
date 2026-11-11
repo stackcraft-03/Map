@@ -1,0 +1,512 @@
+<!-- <!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BranchScope · Retail Intelligence Platform</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B0914;--side:#100D1C;--card:#171326;--sur:#201A32;--p:#8B5CF6;--p2:#A78BFA;--hi:#C4B5FD;--tx:#F5F3FF;--tx2:#A49AB8;--bd:rgba(167,139,250,.14);--ok:#34D399;--warn:#FBBF24;--bad:#F87171}
+*{box-sizing:border-box;margin:0}html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font:13px/1.4 'Plus Jakarta Sans',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--p2);outline-offset:1px}
+i[data-lucide],svg.lucide{width:15px;height:15px;stroke-width:2;flex:none}
+#nav{height:52px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 14px;background:linear-gradient(90deg,#120E22,#0E0B1A);border-bottom:1px solid var(--bd);z-index:1500;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--p),#5B2FD0);display:grid;place-items:center;box-shadow:0 0 18px rgba(139,92,246,.4)}
+.brand b{font-size:15px;display:block;line-height:1.1}.brand small{color:var(--tx2);font-size:11px}
+.ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--tx2);transition:.15s}.ic:hover{background:var(--sur);color:var(--tx)}
+.mid{display:flex;gap:8px;align-items:center}.pill{display:flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--bd);border-radius:20px;background:var(--card);font-size:12px;color:var(--tx2)}.pill b{color:var(--tx);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.right{display:flex;justify-content:flex-end;align-items:center;gap:4px}.clock{color:var(--tx2);font-size:12px;margin-right:8px;text-align:right}
+.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--p2),var(--p));display:grid;place-items:center;font-weight:700;font-size:11px;margin-left:6px}
+#app{flex:1;display:flex;min-height:0;position:relative}
+#side{width:300px;flex:none;background:var(--side);border-right:1px solid var(--bd);overflow-y:auto;padding:12px;transition:margin .25s;z-index:1300}
+#side.col{margin-left:-300px}
+#side::-webkit-scrollbar,.wc::-webkit-scrollbar,#list::-webkit-scrollbar{width:6px}#side::-webkit-scrollbar-thumb,.wc::-webkit-scrollbar-thumb,#list::-webkit-scrollbar-thumb{background:var(--sur);border-radius:6px}
+.sh{font-weight:600;font-size:12px;color:var(--tx2);margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center}
+.sbox{position:relative}.sbox input{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:11px;color:var(--tx);padding:10px 32px;font:inherit}.sbox input:focus{border-color:var(--p)}
+.sbox>i,.sbox>svg{position:absolute;left:10px;top:11px;color:var(--tx2)}.sbox button{position:absolute;right:6px;top:6px;width:26px;height:26px;border-radius:7px;color:var(--tx2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:5px 9px;border-radius:16px;border:1px solid var(--bd);background:var(--card);color:var(--tx2);font-size:11.5px;transition:.15s}
+.chip:hover{border-color:var(--p2);color:var(--tx)}.chip.on{background:var(--p);border-color:var(--p);color:#fff}.chip em{font-style:normal;opacity:.7;margin-left:4px}
+select{width:100%;margin-top:8px;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:9px;padding:7px 9px;font:inherit}
+#list{max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.bi{display:flex;gap:9px;align-items:center;text-align:left;padding:8px 10px;border-radius:10px;background:var(--card);border:1px solid transparent;transition:.15s;width:100%}
+.bi:hover{border-color:var(--bd);background:var(--sur)}.bi.sel{border-color:var(--p);background:rgba(139,92,246,.14)}
+.bi .st{width:9px;height:9px;border-radius:50%;flex:none}.bi div{min-width:0;flex:1}.bi b{display:block;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bi small{color:var(--tx2);font-size:11px}
+.bi span.s{font-size:10.5px;color:var(--tx2);text-align:right}mark{background:rgba(196,181,253,.3);color:var(--hi);border-radius:3px}
+.empty{padding:18px;text-align:center;color:var(--tx2);background:var(--card);border-radius:10px;border:1px dashed var(--bd)}
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kpi{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}
+.kpi .l{display:flex;align-items:center;gap:6px;color:var(--tx2);font-size:11px}.kpi .l i,.kpi .l svg{color:var(--p2)}.kpi .v{font-size:19px;font-weight:700;margin-top:3px}.kpi .t{font-size:11px;color:var(--ok)}.kpi .t.d{color:var(--bad)}
+.cc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;height:190px;position:relative}.cc.sm{height:170px}
+#mapw{flex:1;position:relative;min-width:0;overflow:hidden}#map{position:absolute;inset:0;background:#0B0914}
+.leaflet-tile-pane{filter:invert(1) hue-rotate(205deg) brightness(.85) saturate(.55) contrast(.95)}
+.leaflet-control-attribution{background:rgba(16,13,28,.8)!important;color:var(--tx2)!important}.leaflet-control-attribution a{color:var(--p2)!important}
+.leaflet-bar a,.leaflet-bar button{background:var(--card)!important;color:var(--tx)!important;border-color:var(--bd)!important;display:grid;place-items:center;width:30px;height:30px;line-height:30px}
+.leaflet-bar a:hover,.leaflet-bar button:hover{background:var(--sur)!important}
+.leaflet-tooltip{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:9px;box-shadow:0 6px 20px rgba(0,0,0,.5);font-family:inherit;font-size:11.5px}.leaflet-tooltip:before{display:none}
+.mk{width:18px;height:18px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 3px rgba(139,92,246,.0),0 2px 8px rgba(0,0,0,.6);transition:.2s}
+.mk.sel{transform:scale(1.5);box-shadow:0 0 0 5px rgba(196,181,253,.45),0 0 18px var(--p2)}
+.marker-cluster div{background:rgba(139,92,246,.85)!important;color:#fff;font-weight:700}.marker-cluster{background:rgba(139,92,246,.3)!important}
+#tb{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:1100;display:flex;gap:4px;padding:5px;background:rgba(23,19,38,.92);backdrop-filter:blur(8px);border:1px solid var(--bd);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:calc(100% - 20px);overflow-x:auto}
+#tb button{display:flex;align-items:center;gap:6px;padding:6px 9px;border-radius:9px;color:var(--tx2);white-space:nowrap;font-size:11.5px}#tb button:hover{background:var(--sur);color:var(--tx)}
+#tb .sep{width:1px;background:var(--bd);margin:3px 2px}#tb button.open{color:var(--hi)}#tb button.open i,#tb button.open svg{color:var(--p2)}
+.win{position:absolute;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden;animation:wo .22s ease-out;transition:box-shadow .2s,border-color .2s}
+@keyframes wo{from{opacity:0;transform:scale(.96)}}.win.foc{border-color:var(--p);box-shadow:0 14px 40px rgba(0,0,0,.6),0 0 0 1px var(--p),0 0 24px rgba(139,92,246,.25)}
+.win.hid{display:none}.wh{display:flex;align-items:center;gap:8px;padding:0 6px 0 11px;height:36px;flex:none;background:linear-gradient(90deg,var(--sur),var(--card));cursor:move;user-select:none;touch-action:none}
+.wh>i,.wh>svg{color:var(--p2)}.wh span{flex:1;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wh small{color:var(--tx2);font-size:11px;margin-right:4px}
+.wb{display:flex}.wb button{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--tx2)}.wb button:hover{background:rgba(167,139,250,.15);color:var(--tx)}.wb button:last-child:hover{background:rgba(248,113,113,.2);color:var(--bad)}
+.wc{flex:1;overflow:auto;padding:10px}.win.mn{height:36px!important;min-height:0}.win.mn .wc,.win.mn .rz{display:none}
+.rz{position:absolute;z-index:3}.rz[data-d=e]{right:-3px;top:8px;bottom:8px;width:7px;cursor:ew-resize}.rz[data-d=w]{left:-3px;top:8px;bottom:8px;width:7px;cursor:ew-resize}
+.rz[data-d=s]{bottom:-3px;left:8px;right:8px;height:7px;cursor:ns-resize}.rz[data-d=n]{top:-3px;left:8px;right:8px;height:7px;cursor:ns-resize}
+.rz[data-d=se]{right:-3px;bottom:-3px;width:14px;height:14px;cursor:nwse-resize}.rz[data-d=sw]{left:-3px;bottom:-3px;width:14px;height:14px;cursor:nesw-resize}
+.rz[data-d=ne]{right:-3px;top:-3px;width:14px;height:14px;cursor:nesw-resize}.rz[data-d=nw]{left:-3px;top:-3px;width:14px;height:14px;cursor:nwse-resize}
+.row{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bd)}.row:last-child{border:0}.row i,.row svg{color:var(--p2);margin-top:1px}.row .k{color:var(--tx2);font-size:11.5px;min-width:96px}.row .v{font-weight:500;flex:1;text-align:right}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:7px;margin-bottom:9px}.g2 .kpi{background:var(--sur)}.g2 .kpi .v{font-size:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600}
+.ch{height:150px;position:relative;margin-bottom:9px}.ch.t{height:120px}
+table{width:100%;border-collapse:collapse;font-size:11.5px}th{color:var(--tx2);font-weight:500;text-align:left;padding:5px 4px;border-bottom:1px solid var(--bd)}td{padding:6px 4px;border-bottom:1px solid var(--bd)}td:not(:first-child),th:not(:first-child){text-align:right}
+.bar{height:6px;border-radius:4px;background:var(--sur);overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--hi));border-radius:4px}
+h4{font-size:11.5px;color:var(--tx2);font-weight:600;margin:6px 0 5px}
+.ld{position:absolute;inset:0;background:var(--bg);display:grid;place-items:center;z-index:3000;transition:opacity .4s}.ld.x{opacity:0;pointer-events:none}.ld div{width:34px;height:34px;border:3px solid var(--sur);border-top-color:var(--p);border-radius:50%;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:1000px){#side{width:260px}#side.col{margin-left:-260px}.clock{display:none}.mid .pill:last-child{display:none}}
+@media(max-width:700px){#nav{grid-template-columns:1fr auto}.mid{display:none}#side{position:absolute;inset:0 auto 0 0;width:85%;max-width:320px;box-shadow:10px 0 30px rgba(0,0,0,.6)}#side.col{margin-left:-100%}#tb .lb{display:none}.brand small{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="ld" id="ld"><div></div></div>
+<header id="nav">
+ <div class="brand"><button class="ic" id="sbt" title="Toggle sidebar" aria-label="Toggle sidebar"><i data-lucide="panel-left"></i></button><div class="logo"><i data-lucide="radar" style="color:#fff"></i></div><div><b>BranchScope</b><small>Retail Intelligence Platform</small></div></div>
+ <div class="mid"><div class="pill"><i data-lucide="map-pin"></i><b id="rl">All Regions</b></div><div class="pill"><span class="dot"></span>Live demo data</div></div>
+ <div class="right"><span class="clock" id="clk"></span><button class="ic" title="Notifications" aria-label="Notifications"><i data-lucide="bell"></i></button><button class="ic" title="Settings" aria-label="Settings"><i data-lucide="settings"></i></button><div class="av" title="Profile">SA</div></div>
+</header>
+<div id="app">
+ <aside id="side">
+  <div class="sbox"><i data-lucide="search"></i><input id="q" placeholder="Name, ID, city, region, manager" aria-label="Search branches" autocomplete="off"><button id="qc" title="Clear search" hidden><i data-lucide="x"></i></button></div>
+  <div class="sh">Regions <button class="chip" id="rs" title="Reset filters">Reset</button></div>
+  <div class="chips" id="regs"></div>
+  <select id="stf" aria-label="Filter by status"><option value="">All statuses</option><option value="high">High-performing</option><option value="active">Active</option><option value="attention">Needs attention</option><option value="critical">Critical</option></select>
+  <div class="sh">Branches <span id="bc"></span></div><div id="list"></div>
+  <div class="sh">Summary</div><div class="kg" id="kpis"></div>
+  <div class="sh">Branches by region</div><div class="cc"><canvas id="c1"></canvas></div>
+  <div class="sh">Revenue by region (PKR M)</div><div class="cc sm"><canvas id="c2"></canvas></div>
+ </aside>
+ <main id="mapw"><div id="map"></div>
+  <div id="tb"></div></main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),ico=()=>window.lucide&&lucide.createIcons();
+const REGIONS=['Punjab','Sindh','Khyber Pakhtunkhwa','Islamabad Capital Territory','Balochistan'];
+const ST={high:['High-performing','#34D399'],active:['Active','#8B5CF6'],attention:['Needs attention','#FBBF24'],critical:['Critical','#F87171']};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// ---------- Demo data (illustrative only) ----------
+const SEED=[
+['Lahore Gulberg','Lahore','Punjab',31.5120,74.3436,'high','Main Boulevard, Gulberg III'],
+['Lahore DHA','Lahore','Punjab',31.4697,74.4000,'active','Phase 5 Commercial, DHA'],
+['Lahore Johar Town','Lahore','Punjab',31.4650,74.2728,'attention','Block G, Johar Town'],
+['Islamabad F-7','Islamabad','Islamabad Capital Territory',33.7215,73.0551,'high','Jinnah Super Market, F-7'],
+['Islamabad Blue Area','Islamabad','Islamabad Capital Territory',33.7100,73.0600,'active','Jinnah Avenue, Blue Area'],
+['Rawalpindi Saddar','Rawalpindi','Punjab',33.5970,73.0479,'active','Bank Road, Saddar'],
+['Rawalpindi Bahria','Rawalpindi','Punjab',33.5210,73.1000,'attention','Bahria Town Phase 4'],
+['Faisalabad D Ground','Faisalabad','Punjab',31.4180,73.0790,'active','D Ground, Peoples Colony'],
+['Faisalabad Susan Road','Faisalabad','Punjab',31.4300,73.1000,'critical','Susan Road, Madina Town'],
+['Multan Cantt','Multan','Punjab',30.1978,71.4697,'active','Nusrat Road, Multan Cantt'],
+['Karachi Clifton','Karachi','Sindh',24.8138,67.0300,'high','Block 5, Clifton'],
+['Karachi Gulshan','Karachi','Sindh',24.9200,67.0900,'active','Gulshan-e-Iqbal Block 13'],
+['Karachi Saddar','Karachi','Sindh',24.8607,67.0100,'attention','Zaibunnisa Street, Saddar'],
+['Hyderabad Latifabad','Hyderabad','Sindh',25.3960,68.3578,'critical','Unit 8, Latifabad'],
+['Peshawar University Rd','Peshawar','Khyber Pakhtunkhwa',34.0000,71.4800,'active','University Road'],
+['Peshawar Hayatabad','Peshawar','Khyber Pakhtunkhwa',33.9800,71.4200,'attention','Phase 3, Hayatabad'],
+['Abbottabad Mall Rd','Abbottabad','Khyber Pakhtunkhwa',34.1688,73.2215,'active','Mall Road'],
+['Quetta Jinnah Rd','Quetta','Balochistan',30.1798,66.9750,'attention','Jinnah Road']];
+const MGR=['Ahmed Raza','Sana Malik','Bilal Chaudhry','Ayesha Khan','Usman Tariq','Hina Siddiqui','Faisal Mehmood','Mariam Aslam','Kamran Akhtar'];
+const PROD=['Basmati Rice 5kg','Cooking Oil 3L','Tea 900g','Sugar 5kg','Detergent 2kg','Milk Pack 1L','Atta 10kg','Shampoo 650ml','Biscuit Carton','Dates 1kg'];
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const BR=SEED.map((s,i)=>{const r=rng(i*97+13),R=(a,b)=>a+r()*(b-a),I=(a,b)=>Math.round(R(a,b)),mul={high:1.35,active:1,attention:.7,critical:.45}[s[5]];
+ const base=R(14,26)*mul,rev=MON.map((m,k)=>+(base*(1+.12*Math.sin(k/2)+k*.008+R(-.05,.05))).toFixed(1)),exp=rev.map(v=>+(v*R(.68,.86)).toFixed(1));
+ const emp=I(22,70),tp=I(900,3200),low=I(8,70),oos=I(0,22),st=Math.max(0,100-I(0,18)),
+ cu=I(9e3,4e4),vis=I(180,900);
+ const mr=rev[11],me=exp[11],tr=rev.reduce((a,b)=>a+b,0);
+ return{id:'BS-'+String(i+1).padStart(3,'0'),name:s[0],city:s[1],region:s[2],lat:s[3],lng:s[4],status:s[5],addr:s[6]+', '+s[1],mgr:MGR[i%9],tel:'+92 3'+I(0,4)+I(0,9)+' '+I(1e6,9.9e6),open:`${I(2012,2023)}-${String(I(1,12)).padStart(2,'0')}-${String(I(1,28)).padStart(2,'0')}`,
+ score:Math.round(({high:90,active:78,attention:62,critical:41}[s[5]])+R(-5,5)),rev,exp,totalRev:tr,mRev:mr,mExp:me,profit:+(mr-me).toFixed(1),margin:+((mr-me)/mr*100).toFixed(1),growth:+((rev[11]/rev[5]-1)*100).toFixed(1),
+ inv:{total:tp,avail:Math.round(tp*R(.82,.95)),low,oos,value:+(R(18,60)*mul).toFixed(1),dist:[Math.round(tp*.62),low*3,low,oos],top:PROD.slice().sort(()=>r()-.5).slice(0,4).map(n=>[n,I(300,2400)]),lowList:PROD.slice().sort(()=>r()-.5).slice(0,4).map(n=>[n,I(2,14),I(20,60)])},
+ staff:{emp,mgrs:I(2,4),cash:Math.round(emp*.25),sales:Math.round(emp*.4),att:+R(86,98).toFixed(1),avail:+R(78,96).toFixed(0),shifts:[['Morning','08:00–16:00',Math.round(emp*.45)],['Evening','16:00–00:00',Math.round(emp*.4)],['Night','00:00–08:00',Math.round(emp*.15)]]},
+ infra:{size:['Small','Medium','Large'][I(0,2)],area:I(4000,16000),counters:I(5,18),storage:I(2000,9000),parking:r()>.25?'Available · '+I(15,80)+' bays':'Not available',cctv:r()>.15?'Online · '+I(12,40)+' cameras':'Partially offline',net:r()>.2?'Fiber · Stable':'Backup LTE',power:r()>.2?'Generator + UPS':'UPS only',maint:s[5]==='critical'?'Overdue':s[5]==='attention'?'Scheduled':'Up to date'},
+ cust:{total:cu,daily:vis,tx:I(8e3,3.2e4),avg:I(1800,4200),sat:+R(3.4,4.9).toFixed(1),ret:I(38,72),act:MON.map(()=>Math.round(vis*R(.7,1.3)))}}});
+// ---------- State ----------
+const S={sel:null,region:'',status:'',q:'',pinned:false};
+const fmtM=v=>'PKR '+v.toLocaleString(undefined,{maximumFractionDigits:1})+'M',fmtN=v=>v.toLocaleString();
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const badge=s=>`<span class="badge" style="background:${ST[s][1]}22;color:${ST[s][1]}">${ST[s][0]}</span>`;
+const kp=(l,v,ic,t,d)=>`<div class="kpi"><div class="l"><i data-lucide="${ic}"></i>${l}</div><div class="v">${v}</div>${t?`<div class="t ${d?'d':''}">${t}</div>`:''}</div>`;
+const rw=(ic,k,v)=>`<div class="row"><i data-lucide="${ic}"></i><span class="k">${k}</span><span class="v">${v}</span></div>`;
+function filtered(ignoreQ){const q=S.q.trim().toLowerCase();return BR.filter(b=>(!S.region||b.region===S.region)&&(!S.status||b.status===S.status)&&(ignoreQ||!q||[b.name,b.id,b.city,b.region,b.mgr].some(x=>x.toLowerCase().includes(q))))}
+const hl=t=>{const q=S.q.trim();if(!q)return esc(t);return esc(t).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[&<>"]/g,'')+')','ig'),'<mark>$1</mark>')};
+// ---------- Charts ----------
+Chart.defaults.color='#A49AB8';Chart.defaults.font.family="'Plus Jakarta Sans',sans-serif";Chart.defaults.font.size=10.5;Chart.defaults.maintainAspectRatio=false;
+const PAL=['#8B5CF6','#A78BFA','#C4B5FD','#6D3FD6','#DDD6FE'],tip={backgroundColor:'#201A32',borderColor:'rgba(167,139,250,.3)',borderWidth:1,titleColor:'#F5F3FF',bodyColor:'#C4B5FD',padding:8,cornerRadius:8};
+const noGrid={x:{grid:{display:false},border:{display:false}},y:{grid:{color:'rgba(167,139,250,.07)'},border:{display:false}}};
+function mk(el,cfg,store){if(store&&store[el.id])store[el.id].destroy();const c=new Chart(el,cfg);if(store)store[el.id]=c;return c}
+const SC={};
+function sideCharts(){const L=filtered(true),rs=REGIONS.filter(r=>L.some(b=>b.region===r)),cnt=rs.map(r=>L.filter(b=>b.region===r).length),tot=cnt.reduce((a,b)=>a+b,0)||1;
+ mk($('c1'),{type:'doughnut',data:{labels:rs,datasets:[{data:cnt,backgroundColor:PAL,borderColor:'#171326',borderWidth:2}]},options:{cutout:'62%',plugins:{legend:{position:'right',labels:{boxWidth:8,boxHeight:8,usePointStyle:true,font:{size:10}}},tooltip:{...tip,callbacks:{label:c=>` ${c.raw} branches (${Math.round(c.raw/tot*100)}%)`}}}}},SC);
+ mk($('c2'),{type:'bar',data:{labels:rs.map(r=>r.replace('Khyber Pakhtunkhwa','KP').replace('Islamabad Capital Territory','ICT').replace('Balochistan','Bal.')),datasets:[{data:rs.map(r=>+L.filter(b=>b.region===r).reduce((a,b)=>a+b.totalRev,0).toFixed(0)),backgroundColor:'#8B5CF6',borderRadius:6,maxBarThickness:28}]},options:{scales:noGrid,plugins:{legend:{display:false},tooltip:tip}}},SC)}
+// ---------- Sidebar ----------
+function renderSide(){const L=filtered(),all=filtered(true);
+ $('regs').innerHTML=[['','All Regions',BR.length],...REGIONS.map(r=>[r,r.replace('Islamabad Capital Territory','Islamabad (ICT)'),BR.filter(b=>b.region===r).length])].map(([v,l,n])=>`<button class="chip ${S.region===v?'on':''}" data-r="${v}">${l}<em>${n}</em></button>`).join('');
+ $('list').innerHTML=L.length?L.map(b=>`<button class="bi ${S.sel===b.id?'sel':''}" data-id="${b.id}"><span class="st" style="background:${ST[b.status][1]}"></span><div><b>${hl(b.name)}</b><small>${hl(b.id)} · ${hl(b.city)} · ${hl(b.region)}</small></div><span class="s">${ST[b.status][0]}</span></button>`).join(''):`<div class="empty">No branch matches your filters.<br>Try another name, ID or city.</div>`;
+ $('bc').textContent=L.length+' shown';$('qc').hidden=!S.q;$('rl').textContent=S.region||'All Regions';
+ const act=all.filter(b=>b.status!=='critical').length,rev=all.reduce((a,b)=>a+b.totalRev,0);
+ $('kpis').innerHTML=kp('Total branches',all.length,'store')+kp('Active',act,'check-circle-2',Math.round(act/(all.length||1)*100)+'% of total')+kp('Inactive',all.length-act,'alert-triangle','Critical status',1)+kp('Total revenue','PKR '+(rev/1000).toFixed(2)+'B','banknote','12-month total');
+ sideCharts();ico();drawMarkers()}
+// ---------- Map ----------
+const map=L.map('map',{zoomControl:false,attributionControl:true,minZoom:4}).setView([30.3,70],5);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+L.control.zoom({position:'topright'}).addTo(map);
+const Ctl=L.Control.extend({options:{position:'topright'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar');[['maximize','Fullscreen',()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()],['scan','Fit all branches',fit],['rotate-ccw','Reset map view',()=>{map.setView([30.3,70],5);}]].forEach(([i,t,f])=>{const a=L.DomUtil.create('a','',d);a.href='#';a.title=t;a.setAttribute('aria-label',t);a.innerHTML=`<i data-lucide="${i}"></i>`;L.DomEvent.on(a,'click',e=>{L.DomEvent.stop(e);f()})});L.DomEvent.disableClickPropagation(d);return d}});
+new Ctl().addTo(map);
+const cl=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40}).addTo(map),MK={};
+const icon=(b,s)=>L.divIcon({className:'',html:`<div class="mk ${s?'sel':''}" style="background:${ST[b.status][1]}"></div>`,iconSize:[18,18]});
+function drawMarkers(){cl.clearLayers();Object.keys(MK).forEach(k=>delete MK[k]);filtered().forEach(b=>{const m=L.marker([b.lat,b.lng],{icon:icon(b,S.sel===b.id),title:b.name}).bindTooltip(`<b>${esc(b.name)}</b><br>${b.id} · ${b.city}<br>${ST[b.status][0]}`,{direction:'top',offset:[0,-8]});m.on('click',()=>select(b.id));MK[b.id]=m;cl.addLayer(m)})}
+function fit(){const L2=filtered();if(L2.length)map.fitBounds(L2.map(b=>[b.lat,b.lng]),{padding:[60,60],maxZoom:11})}
+// ---------- Floating windows ----------
+const W={},WD=[
+['ov','Branch Overview','building-2',[0,0]],['fin','Financial Performance','line-chart',[1,0]],['inv','Inventory & Stock','package',[2,0]],
+['stf','Staff & Operations','users',[0,1]],['inf','Infrastructure','server',[1,1]],['cus','Customer Analytics','shopping-bag',[2,1]]];
+let zTop=1000;const wrap=()=>$('mapw');
+const R={
+ov:b=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><b style="font-size:15px">${esc(b.name)}</b><div style="color:var(--tx2);font-size:11.5px">${b.id}</div></div>${badge(b.status)}</div>
+ <div class="g2">${kp('Performance score',b.score+'/100','gauge')}${kp('Location',b.city,'map-pin',b.lat.toFixed(3)+', '+b.lng.toFixed(3))}</div>`+rw('globe','Region',b.region)+rw('map','Address',esc(b.addr))+rw('user','Manager',b.mgr)+rw('phone','Contact',b.tel)+rw('calendar','Opened',b.open)+rw('activity','Status',ST[b.status][0]),
+ fin:b=>`<div class="g2">${kp('Total revenue (12M)',fmtM(+b.totalRev.toFixed(0)),'banknote')}${kp('Monthly revenue',fmtM(b.mRev),'trending-up')}${kp('Monthly expenses',fmtM(b.mExp),'receipt')}${kp('Net profit',fmtM(b.profit),'wallet')}${kp('Profit margin',b.margin+'%','percent')}${kp('Growth (6M)',(b.growth>0?'+':'')+b.growth+'%','arrow-up-right',null)}</div><h4>Revenue trend (PKR M)</h4><div class="ch"><canvas id="f1"></canvas></div><h4>Expenses vs profit</h4><div class="ch"><canvas id="f2"></canvas></div>`,
+ inv:b=>`<div class="g2">${kp('Total products',fmtN(b.inv.total),'boxes')}${kp('Available stock',fmtN(b.inv.avail),'check')}${kp('Low stock',b.inv.low,'alert-circle')}${kp('Out of stock',b.inv.oos,'x-circle')}${kp('Inventory value',fmtM(b.inv.value),'landmark')}</div><h4>Stock distribution</h4><div class="ch"><canvas id="i1"></canvas></div><h4>Top-selling products</h4><table><tr><th>Product</th><th>Units sold</th></tr>${b.inv.top.map(p=>`<tr><td>${p[0]}</td><td>${fmtN(p[1])}</td></tr>`).join('')}</table><h4>Low-stock items</h4><table><tr><th>Product</th><th>Left</th><th>Min</th></tr>${b.inv.lowList.map(p=>`<tr><td>${p[0]}</td><td style="color:var(--warn)">${p[1]}</td><td>${p[2]}</td></tr>`).join('')}</table>`,
+ stf:b=>`<div class="g2">${kp('Employees',b.staff.emp,'users')}${kp('Managers',b.staff.mgrs,'briefcase')}${kp('Cashiers',b.staff.cash,'credit-card')}${kp('Sales reps',b.staff.sales,'handshake')}</div><h4>Attendance · ${b.staff.att}%</h4><div class="bar"><i style="width:${b.staff.att}%"></i></div><h4>Staff availability · ${b.staff.avail}%</h4><div class="bar"><i style="width:${b.staff.avail}%"></i></div><div style="margin:10px 0 6px">${badge(b.status)}</div><h4>Shifts</h4><table><tr><th>Shift</th><th>Hours</th><th>Staff</th></tr>${b.staff.shifts.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td></tr>`).join('')}</table>`,
+ inf:b=>{const f=b.infra,ok=t=>/Online|Available|Stable|Generator|Up to date|Fiber/.test(t)?'var(--ok)':'var(--warn)';return rw('ruler','Branch size',f.size)+rw('square','Floor area',fmtN(f.area)+' sq ft')+rw('scan-barcode','Counters',f.counters)+rw('warehouse','Storage capacity',fmtN(f.storage)+' units')+rw('car','Parking',`<span style="color:${ok(f.parking)}">${f.parking}</span>`)+rw('cctv','CCTV',`<span style="color:${ok(f.cctv)}">${f.cctv}</span>`)+rw('wifi','Internet',`<span style="color:${ok(f.net)}">${f.net}</span>`)+rw('zap','Power backup',`<span style="color:${ok(f.power)}">${f.power}</span>`)+rw('wrench','Maintenance',`<span style="color:${f.maint==='Overdue'?'var(--bad)':ok(f.maint)}">${f.maint}</span>`)},
+ cus:b=>`<div class="g2">${kp('Total customers',fmtN(b.cust.total),'users-round')}${kp('Daily visitors',fmtN(b.cust.daily),'footprints')}${kp('Monthly transactions',fmtN(b.cust.tx),'repeat')}${kp('Avg. transaction','PKR '+fmtN(b.cust.avg),'receipt')}${kp('Satisfaction',b.cust.sat+' / 5','smile')}${kp('Returning',b.cust.ret+'%','refresh-cw')}</div><h4>Daily visitors by month</h4><div class="ch"><canvas id="u1"></canvas></div>`};
+const CH={
+ fin:(b,s)=>{mk($('f1'),{type:'line',data:{labels:MON,datasets:[{data:b.rev,borderColor:'#A78BFA',backgroundColor:'rgba(139,92,246,.2)',fill:true,tension:.35,pointRadius:0,pointHoverRadius:4}]},options:{scales:noGrid,plugins:{legend:{display:false},tooltip:tip}}},s);
+  mk($('f2'),{type:'bar',data:{labels:MON,datasets:[{label:'Expenses',data:b.exp,backgroundColor:'#6D3FD6',borderRadius:3},{label:'Profit',data:b.rev.map((v,i)=>+(v-b.exp[i]).toFixed(1)),backgroundColor:'#C4B5FD',borderRadius:3}]},options:{scales:noGrid,plugins:{legend:{labels:{boxWidth:8,boxHeight:8}},tooltip:tip}}},s)},
+ inv:(b,s)=>mk($('i1'),{type:'doughnut',data:{labels:['In stock','Adequate buffer','Low stock','Out of stock'],datasets:[{data:b.inv.dist,backgroundColor:['#8B5CF6','#C4B5FD','#FBBF24','#F87171'],borderColor:'#171326',borderWidth:2}]},options:{cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:8,boxHeight:8,font:{size:10}}},tooltip:tip}}},s),
+ cus:(b,s)=>mk($('u1'),{type:'line',data:{labels:MON,datasets:[{data:b.cust.act,borderColor:'#34D399',backgroundColor:'rgba(52,211,153,.12)',fill:true,tension:.35,pointRadius:0,pointHoverRadius:4}]},options:{scales:noGrid,plugins:{legend:{display:false},tooltip:tip}}},s)};
+function mkWin(d){const [id,title,ic]=d,el=document.createElement('div');el.className='win hid';el.id='w-'+id;
+ el.innerHTML=`<div class="wh"><i data-lucide="${ic}"></i><span>${title}</span><small></small><div class="wb"><button data-a="mn" title="Minimize"><i data-lucide="minus"></i></button><button data-a="mx" title="Maximize"><i data-lucide="maximize-2"></i></button><button data-a="x" title="Close"><i data-lucide="x"></i></button></div></div><div class="wc"></div>`+['n','s','e','w','ne','nw','se','sw'].map(x=>`<div class="rz" data-d="${x}"></div>`).join('');
+ wrap().appendChild(el);const w=W[id]={id,el,x:0,y:0,w:320,h:260,open:false,mn:false,mx:false,prev:null,ch:{}};
+ el.addEventListener('pointerdown',()=>focus(id),true);
+ el.querySelector('.wb').onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='mn')minimize(id);if(a==='mx')maximize(id);if(a==='x')closeWin(id)};
+ el.querySelector('.wh').ondblclick=e=>{if(!e.target.closest('button'))maximize(id)};
+ el.querySelector('.wh').addEventListener('pointerdown',e=>{if(e.target.closest('button')||w.mx||e.button)return;drag(e,w,(dx,dy,s)=>{w.x=s.x+dx;w.y=s.y+dy;clamp(w);place(w)})});
+ el.querySelectorAll('.rz').forEach(h=>h.addEventListener('pointerdown',e=>{if(w.mx||w.mn)return;e.stopPropagation();const d=h.dataset.d;drag(e,w,(dx,dy,s)=>{const mw=Math.min(240,wrap().clientWidth-8),mh=140;
+  if(d.includes('e'))w.w=Math.max(mw,s.w+dx);if(d.includes('s'))w.h=Math.max(mh,s.h+dy);
+  if(d.includes('w')){w.w=Math.max(mw,s.w-dx);w.x=s.x+s.w-w.w}if(d.includes('n')){w.h=Math.max(mh,s.h-dy);w.y=s.y+s.h-w.h}clamp(w);place(w)})}));
+ return w}
+function drag(e,w,fn){e.preventDefault();const sx=e.clientX,sy=e.clientY,s={x:w.x,y:w.y,w:w.w,h:w.h};document.body.style.userSelect='none';
+ const mv=ev=>fn(ev.clientX-sx,ev.clientY-sy,s),up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.body.style.userSelect='';resizeCharts(w)};
+ document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)}
+function clamp(w){const W_=wrap().clientWidth,H=wrap().clientHeight;w.w=Math.min(w.w,W_);w.h=Math.min(w.h,H);w.x=Math.max(0,Math.min(w.x,W_-Math.min(w.w,120)));w.y=Math.max(0,Math.min(w.y,H-36))}
+function place(w){const s=w.el.style;s.left=w.x+'px';s.top=w.y+'px';s.width=w.w+'px';s.height=w.h+'px';w.el.classList.toggle('mn',w.mn);w.el.classList.toggle('hid',!w.open)}
+function resizeCharts(w){Object.values(w.ch).forEach(c=>c.resize())}
+function focus(id){Object.values(W).forEach(w=>w.el.classList.toggle('foc',w.id===id));W[id].el.style.zIndex=++zTop}
+function fillWin(id){const w=W[id],b=BR.find(x=>x.id===S.sel);if(!b)return;const c=w.el.querySelector('.wc'),sc=c.scrollTop;w.el.querySelector('small').textContent=b.id;
+ Object.values(w.ch).forEach(x=>x.destroy());w.ch={};c.innerHTML=R[id](b);CH[id]?.(b,w.ch);c.scrollTop=sc;ico()}
+function openWin(id,keepLayout){const w=W[id];w.open=true;w.mn=false;if(!keepLayout&&!w.placed)defaultPos(w);fillWin(id);place(w);focus(id);resizeCharts(w);dock()}
+function closeWin(id){const w=W[id];w.open=false;w.mx=false;place(w);dock()}
+function minimize(id){const w=W[id];if(w.mx)maximize(id);w.mn=!w.mn;place(w);ico();setTimeout(()=>resizeCharts(w),50)}
+function maximize(id){const w=W[id];w.mn=false;if(!w.mx){w.prev={x:w.x,y:w.y,w:w.w,h:w.h};w.mx=true;w.x=0;w.y=0;w.w=wrap().clientWidth;w.h=wrap().clientHeight}else{w.mx=false;Object.assign(w,w.prev)}
+ place(w);w.el.querySelector('[data-a=mx]').innerHTML=`<i data-lucide="${w.mx?'minimize-2':'maximize-2'}"></i>`;ico();setTimeout(()=>resizeCharts(w),50);focus(id)}
+function defaultPos(w){const [c,r]=WD.find(d=>d[0]===w.id)[3],W_=wrap().clientWidth,H=wrap().clientHeight,mob=W_<700,ww=mob?W_-16:Math.min(340,Math.floor((W_-40)/3)),wh=mob?Math.round(H*.55):Math.min(280,Math.floor((H-110)/2));
+ w.w=ww;w.h=wh;w.x=mob?8+WD.findIndex(d=>d[0]===w.id)*6:Math.max(8,W_-(3-c)*(ww+10)-0);w.y=mob?12+WD.findIndex(d=>d[0]===w.id)*6:12+r*(wh+10);if(!mob)w.x=W_-(3-c)*(ww+10)+4;w.mx=false;w.placed=true;clamp(w)}
+const opened=()=>WD.map(d=>W[d[0]]).filter(w=>w.open);
+function layout(mode){const L2=opened();if(!L2.length)return;const W_=wrap().clientWidth,H=wrap().clientHeight-70;
+ if(mode==='reset'){WD.forEach(d=>{const w=W[d[0]];w.mn=false;w.mx=false;defaultPos(w);place(w);fillWin(d[0])});return}
+ if(mode==='cascade')L2.forEach((w,i)=>{w.mn=false;w.mx=false;w.w=Math.min(360,W_-40);w.h=Math.min(300,H-30);w.x=20+i*34;w.y=10+i*34;clamp(w);place(w);focus(w.id);resizeCharts(w)});
+ if(mode==='tile'){const n=L2.length,cols=W_<700?1:n>4?3:n>1?2:1,rows=Math.ceil(n/cols),cw=Math.floor(W_/cols),ch=Math.floor(H/rows);L2.forEach((w,i)=>{w.mn=false;w.mx=false;w.x=(i%cols)*cw;w.y=Math.floor(i/cols)*ch;w.w=cw-4;w.h=ch-4;place(w);resizeCharts(w)})}
+ if(mode==='min')L2.forEach(w=>{w.mn=true;place(w)});if(mode==='min')ico()}
+function dock(){document.querySelectorAll('#tb [data-w]').forEach(b=>b.classList.toggle('open',W[b.dataset.w].open))}
+function buildToolbar(){const act=[['open','layout-grid','Open all'],['close','square-x','Close all'],['min','minimize-2','Minimize all'],['cascade','layers','Cascade'],['tile','layout-dashboard','Tile'],['reset','rotate-ccw','Reset layout']];
+ $('tb').innerHTML=WD.map(d=>`<button data-w="${d[0]}" title="${d[1]}"><i data-lucide="${d[2]}"></i><span class="lb">${d[1].split(/[ &]+/)[0]}</span></button>`).join('')+'<span class="sep"></span>'+act.map(a=>`<button data-act="${a[0]}" title="${a[2]}"><i data-lucide="${a[1]}"></i><span class="lb">${a[2]}</span></button>`).join('');
+ $('tb').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.w){const id=b.dataset.w;if(!S.sel){toast();return}W[id].open&&!W[id].mn?(W[id].el.classList.contains('foc')?closeWin(id):focus(id)):openWin(id,true)}
+  else{const a=b.dataset.act;if(!S.sel){toast();return}if(a==='open'){WD.forEach(d=>openWin(d[0],true));layout('tile')}else if(a==='close')WD.forEach(d=>closeWin(d[0]));else layout(a)}}}
+function toast(){const t=document.createElement('div');t.textContent='Select a branch to open its windows.';t.style.cssText='position:absolute;top:14px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--p);padding:8px 14px;border-radius:10px;z-index:1400';wrap().appendChild(t);setTimeout(()=>t.remove(),1800)}
+// ---------- Selection ----------
+function select(id,fromList){const first=!S.sel||!opened().length;S.sel=id;const b=BR.find(x=>x.id===id);
+ map.flyTo([b.lat,b.lng],12,{duration:.8});Object.entries(MK).forEach(([k,m])=>m.setIcon(icon(BR.find(x=>x.id===k),k===id)));
+ document.querySelectorAll('.bi').forEach(el=>el.classList.toggle('sel',el.dataset.id===id));document.querySelector('.bi.sel')?.scrollIntoView({block:'nearest'});
+ if(first)WD.forEach(d=>openWin(d[0]));else opened().forEach(w=>fillWin(w.id));
+ if(innerWidth<=700)$('side').classList.add('col')}
+// ---------- Events ----------
+$('q').oninput=e=>{S.q=e.target.value;renderSide()};$('qc').onclick=()=>{S.q='';$('q').value='';renderSide();$('q').focus()};
+$('regs').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.region=b.dataset.r;renderSide();fit()};
+$('stf').onchange=e=>{S.status=e.target.value;renderSide();fit()};
+$('rs').onclick=()=>{S.region='';S.status='';S.q='';$('q').value='';$('stf').value='';renderSide();fit()};
+$('list').onclick=e=>{const b=e.target.closest('.bi');if(b)select(b.dataset.id)};
+$('sbt').onclick=()=>{$('side').classList.toggle('col');setTimeout(()=>{map.invalidateSize();sideCharts()},280)};
+addEventListener('resize',()=>{WD.forEach(d=>{const w=W[d[0]];if(w.mx){w.w=wrap().clientWidth;w.h=wrap().clientHeight}clamp(w);place(w)})});
+const tick=()=>$('clk').innerHTML=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+'<br>'+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+// ---------- Init ----------
+WD.forEach(mkWin);buildToolbar();tick();setInterval(tick,30000);
+if(innerWidth<=700)$('side').classList.add('col');
+renderSide();fit();ico();setTimeout(()=>{map.invalidateSize();$('ld').classList.add('x')},350);
+</script></body></html> -->
+
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BranchScope · Retail Intelligence Platform</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B0914;--side:#100D1C;--card:#171326;--sur:#201A32;--p:#8B5CF6;--p2:#A78BFA;--hi:#C4B5FD;--tx:#F5F3FF;--tx2:#A49AB8;--bd:rgba(167,139,250,.14);--ok:#34D399;--warn:#FBBF24;--bad:#F87171}
+*{box-sizing:border-box;margin:0}html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font:13px/1.4 'Plus Jakarta Sans',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--p2);outline-offset:1px}
+i[data-lucide],svg.lucide{width:15px;height:15px;stroke-width:2;flex:none}
+#nav{height:52px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 14px;background:linear-gradient(90deg,#120E22,#0E0B1A);border-bottom:1px solid var(--bd);z-index:1500;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--p),#5B2FD0);display:grid;place-items:center;box-shadow:0 0 18px rgba(139,92,246,.4)}
+.brand b{font-size:15px;display:block;line-height:1.1}.brand small{color:var(--tx2);font-size:11px}
+.ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--tx2);transition:.15s}.ic:hover{background:var(--sur);color:var(--tx)}
+.mid{display:flex;gap:8px;align-items:center}.pill{display:flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--bd);border-radius:20px;background:var(--card);font-size:12px;color:var(--tx2)}.pill b{color:var(--tx);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.right{display:flex;justify-content:flex-end;align-items:center;gap:4px}.clock{color:var(--tx2);font-size:12px;margin-right:8px;text-align:right}
+.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--p2),var(--p));display:grid;place-items:center;font-weight:700;font-size:11px;margin-left:6px}
+#app{flex:1;display:flex;min-height:0;position:relative}
+#side{width:300px;flex:none;background:var(--side);border-right:1px solid var(--bd);overflow-y:auto;padding:12px;transition:margin .25s;z-index:1300}
+#side.col{margin-left:-300px}
+#side::-webkit-scrollbar,.wc::-webkit-scrollbar,#list::-webkit-scrollbar{width:6px}#side::-webkit-scrollbar-thumb,.wc::-webkit-scrollbar-thumb,#list::-webkit-scrollbar-thumb{background:var(--sur);border-radius:6px}
+.sh{font-weight:600;font-size:12px;color:var(--tx2);margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center}
+.sbox{position:relative}.sbox input{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:11px;color:var(--tx);padding:10px 32px;font:inherit}.sbox input:focus{border-color:var(--p)}
+.sbox>i,.sbox>svg{position:absolute;left:10px;top:11px;color:var(--tx2)}.sbox button{position:absolute;right:6px;top:6px;width:26px;height:26px;border-radius:7px;color:var(--tx2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:5px 9px;border-radius:16px;border:1px solid var(--bd);background:var(--card);color:var(--tx2);font-size:11.5px;transition:.15s}
+.chip:hover{border-color:var(--p2);color:var(--tx)}.chip.on{background:var(--p);border-color:var(--p);color:#fff}.chip em{font-style:normal;opacity:.7;margin-left:4px}
+select{width:100%;margin-top:8px;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:9px;padding:7px 9px;font:inherit}
+#list{max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.bi{display:flex;gap:9px;align-items:center;text-align:left;padding:8px 10px;border-radius:10px;background:var(--card);border:1px solid transparent;transition:.15s;width:100%}
+.bi:hover{border-color:var(--bd);background:var(--sur)}.bi.sel{border-color:var(--p);background:rgba(139,92,246,.14)}
+.bi .st{width:9px;height:9px;border-radius:50%;flex:none}.bi div{min-width:0;flex:1}.bi b{display:block;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bi small{color:var(--tx2);font-size:11px}
+.bi span.s{font-size:10.5px;color:var(--tx2);text-align:right}mark{background:rgba(196,181,253,.3);color:var(--hi);border-radius:3px}
+.empty{padding:18px;text-align:center;color:var(--tx2);background:var(--card);border-radius:10px;border:1px dashed var(--bd)}
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kpi{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}
+.kpi .l{display:flex;align-items:center;gap:6px;color:var(--tx2);font-size:11px}.kpi .l i,.kpi .l svg{color:var(--p2)}.kpi .v{font-size:19px;font-weight:700;margin-top:3px}.kpi .t{font-size:11px;color:var(--ok)}.kpi .t.d{color:var(--bad)}
+.cc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;height:190px;position:relative}.cc.sm{height:170px}
+#mapw{flex:1;position:relative;min-width:0;overflow:hidden}#map{position:absolute;inset:0;background:#0B0914}
+#mapStatus{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:1050;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:12px;max-width:calc(100% - 24px)}
+#mapStatus.hidden{display:none}#mapStatus.error{border-color:var(--bad)}#mapStatus .spinner{width:14px;height:14px;border:2px solid var(--sur);border-top-color:var(--p2);border-radius:50%;animation:sp .8s linear infinite;flex:none}
+#mapStatus button{padding:4px 10px;border-radius:8px;background:var(--p);color:#fff;font-size:11.5px}#mapStatus button[hidden]{display:none}
+.leaflet-control-attribution{background:rgba(16,13,28,.8)!important;color:var(--tx2)!important}.leaflet-control-attribution a{color:var(--p2)!important}
+.leaflet-bar a,.leaflet-bar button{background:var(--card)!important;color:var(--tx)!important;border-color:var(--bd)!important;display:grid;place-items:center;width:30px;height:30px;line-height:30px}
+.leaflet-bar a:hover,.leaflet-bar button:hover{background:var(--sur)!important}
+.leaflet-tooltip{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:9px;box-shadow:0 6px 20px rgba(0,0,0,.5);font-family:inherit;font-size:11.5px}.leaflet-tooltip:before{display:none}
+.mk{width:18px;height:18px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 3px rgba(139,92,246,.0),0 2px 8px rgba(0,0,0,.6);transition:.2s}
+.mk.sel{transform:scale(1.5);box-shadow:0 0 0 5px rgba(196,181,253,.45),0 0 18px var(--p2)}
+.marker-cluster div{background:rgba(139,92,246,.85)!important;color:#fff;font-weight:700}.marker-cluster{background:rgba(139,92,246,.3)!important}
+#tb{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:1100;display:flex;gap:4px;padding:5px;background:rgba(23,19,38,.92);backdrop-filter:blur(8px);border:1px solid var(--bd);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:calc(100% - 20px);overflow-x:auto}
+#tb button{display:flex;align-items:center;gap:6px;padding:6px 9px;border-radius:9px;color:var(--tx2);white-space:nowrap;font-size:11.5px}#tb button:hover{background:var(--sur);color:var(--tx)}
+#tb .sep{width:1px;background:var(--bd);margin:3px 2px}#tb button.open{color:var(--hi)}#tb button.open i,#tb button.open svg{color:var(--p2)}
+.win{position:absolute;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden;animation:wo .22s ease-out;transition:box-shadow .2s,border-color .2s}
+@keyframes wo{from{opacity:0;transform:scale(.96)}}.win.foc{border-color:var(--p);box-shadow:0 14px 40px rgba(0,0,0,.6),0 0 0 1px var(--p),0 0 24px rgba(139,92,246,.25)}
+.win.hid{display:none}.wh{display:flex;align-items:center;gap:8px;padding:0 6px 0 11px;height:36px;flex:none;background:linear-gradient(90deg,var(--sur),var(--card));cursor:move;user-select:none;touch-action:none}
+.wh>i,.wh>svg{color:var(--p2)}.wh span{flex:1;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wh small{color:var(--tx2);font-size:11px;margin-right:4px}
+.wb{display:flex}.wb button{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--tx2)}.wb button:hover{background:rgba(167,139,250,.15);color:var(--tx)}.wb button:last-child:hover{background:rgba(248,113,113,.2);color:var(--bad)}
+.wc{flex:1;overflow:auto;padding:10px}.win.mn{height:36px!important;min-height:0}.win.mn .wc,.win.mn .rz{display:none}
+.rz{position:absolute;z-index:3}.rz[data-d=e]{right:-3px;top:8px;bottom:8px;width:7px;cursor:ew-resize}.rz[data-d=w]{left:-3px;top:8px;bottom:8px;width:7px;cursor:ew-resize}
+.rz[data-d=s]{bottom:-3px;left:8px;right:8px;height:7px;cursor:ns-resize}.rz[data-d=n]{top:-3px;left:8px;right:8px;height:7px;cursor:ns-resize}
+.rz[data-d=se]{right:-3px;bottom:-3px;width:14px;height:14px;cursor:nwse-resize}.rz[data-d=sw]{left:-3px;bottom:-3px;width:14px;height:14px;cursor:nesw-resize}
+.rz[data-d=ne]{right:-3px;top:-3px;width:14px;height:14px;cursor:nesw-resize}.rz[data-d=nw]{left:-3px;top:-3px;width:14px;height:14px;cursor:nwse-resize}
+.row{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bd)}.row:last-child{border:0}.row i,.row svg{color:var(--p2);margin-top:1px}.row .k{color:var(--tx2);font-size:11.5px;min-width:96px}.row .v{font-weight:500;flex:1;text-align:right}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:7px;margin-bottom:9px}.g2 .kpi{background:var(--sur)}.g2 .kpi .v{font-size:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600}
+.ch{height:150px;position:relative;margin-bottom:9px}.ch.t{height:120px}
+table{width:100%;border-collapse:collapse;font-size:11.5px}th{color:var(--tx2);font-weight:500;text-align:left;padding:5px 4px;border-bottom:1px solid var(--bd)}td{padding:6px 4px;border-bottom:1px solid var(--bd)}td:not(:first-child),th:not(:first-child){text-align:right}
+.bar{height:6px;border-radius:4px;background:var(--sur);overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--hi));border-radius:4px}
+h4{font-size:11.5px;color:var(--tx2);font-weight:600;margin:6px 0 5px}
+.ld{position:absolute;inset:0;background:var(--bg);display:grid;place-items:center;z-index:3000;transition:opacity .4s}.ld.x{opacity:0;pointer-events:none}.ld div{width:34px;height:34px;border:3px solid var(--sur);border-top-color:var(--p);border-radius:50%;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:1000px){#side{width:260px}#side.col{margin-left:-260px}.clock{display:none}.mid .pill:last-child{display:none}}
+@media(max-width:700px){#nav{grid-template-columns:1fr auto}.mid{display:none}#side{position:absolute;inset:0 auto 0 0;width:85%;max-width:320px;box-shadow:10px 0 30px rgba(0,0,0,.6)}#side.col{margin-left:-100%}#tb .lb{display:none}.brand small{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="ld" id="ld"><div></div></div>
+<header id="nav">
+ <div class="brand"><button class="ic" id="sbt" title="Toggle sidebar" aria-label="Toggle sidebar"><i data-lucide="panel-left"></i></button><div class="logo"><i data-lucide="radar" style="color:#fff"></i></div><div><b>BranchScope</b><small>Retail Intelligence Platform</small></div></div>
+ <div class="mid"><div class="pill"><i data-lucide="map-pin"></i><b id="rl">All Regions</b></div><div class="pill"><span class="dot"></span>Live demo data</div></div>
+ <div class="right"><span class="clock" id="clk"></span><button class="ic" title="Notifications" aria-label="Notifications"><i data-lucide="bell"></i></button><button class="ic" title="Settings" aria-label="Settings"><i data-lucide="settings"></i></button><div class="av" title="Profile">SA</div></div>
+</header>
+<div id="app">
+ <aside id="side">
+  <div class="sbox"><i data-lucide="search"></i><input id="q" placeholder="Name, ID, city, region, manager" aria-label="Search branches" autocomplete="off"><button id="qc" title="Clear search" hidden><i data-lucide="x"></i></button></div>
+  <div class="sh">Regions <button class="chip" id="rs" title="Reset filters">Reset</button></div>
+  <div class="chips" id="regs"></div>
+  <select id="stf" aria-label="Filter by status"><option value="">All statuses</option><option value="high">High-performing</option><option value="active">Active</option><option value="attention">Needs attention</option><option value="critical">Critical</option></select>
+  <div class="sh">Branches <span id="bc"></span></div><div id="list"></div>
+  <div class="sh">Regional structure <span class="chip" style="cursor:default">Hierarchy</span></div>
+  <div class="cc" style="height:auto;padding:12px"><select id="rsel" aria-label="Select region" style="margin:0 0 10px"><option value="">All regions</option>
+   <option value="Punjab">Punjab Region</option><option value="Sindh">Sindh Region</option><option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa Region</option><option value="Islamabad Capital Territory">Islamabad Region</option><option value="Balochistan">Balochistan Region</option></select>
+   <div id="tree"></div></div>
+  <div class="sh">Summary</div><div class="kg" id="kpis"></div>
+  <div class="sh">Branches by region</div><div class="cc"><canvas id="c1"></canvas></div>
+  <div class="sh">Revenue by region (PKR M)</div><div class="cc sm"><canvas id="c2"></canvas></div>
+ </aside>
+ <main id="mapw"><div id="map"></div>
+  <div id="mapStatus" class="hidden" role="status"><div class="spinner"></div><span id="mapStatusText"></span><button id="retryMap" hidden>Retry</button></div>
+  <div id="tb"></div></main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),ico=()=>window.lucide&&lucide.createIcons();
+const REGIONS=['Punjab','Sindh','Khyber Pakhtunkhwa','Islamabad Capital Territory','Balochistan'];
+const ST={high:['High-performing','#34D399'],active:['Active','#8B5CF6'],attention:['Needs attention','#FBBF24'],critical:['Critical','#F87171']};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// ---------- Demo data (illustrative only) ----------
+const SEED=[
+['Lahore Gulberg','Lahore','Punjab',31.5120,74.3436,'high','Main Boulevard, Gulberg III'],
+['Lahore DHA','Lahore','Punjab',31.4697,74.4000,'active','Phase 5 Commercial, DHA'],
+['Lahore Johar Town','Lahore','Punjab',31.4650,74.2728,'attention','Block G, Johar Town'],
+['Islamabad F-7','Islamabad','Islamabad Capital Territory',33.7215,73.0551,'high','Jinnah Super Market, F-7'],
+['Islamabad Blue Area','Islamabad','Islamabad Capital Territory',33.7100,73.0600,'active','Jinnah Avenue, Blue Area'],
+['Rawalpindi Saddar','Rawalpindi','Punjab',33.5970,73.0479,'active','Bank Road, Saddar'],
+['Rawalpindi Bahria','Rawalpindi','Punjab',33.5210,73.1000,'attention','Bahria Town Phase 4'],
+['Faisalabad D Ground','Faisalabad','Punjab',31.4180,73.0790,'active','D Ground, Peoples Colony'],
+['Faisalabad Susan Road','Faisalabad','Punjab',31.4300,73.1000,'critical','Susan Road, Madina Town'],
+['Multan Cantt','Multan','Punjab',30.1978,71.4697,'active','Nusrat Road, Multan Cantt'],
+['Karachi Clifton','Karachi','Sindh',24.8138,67.0300,'high','Block 5, Clifton'],
+['Karachi Gulshan','Karachi','Sindh',24.9200,67.0900,'active','Gulshan-e-Iqbal Block 13'],
+['Karachi Saddar','Karachi','Sindh',24.8607,67.0100,'attention','Zaibunnisa Street, Saddar'],
+['Hyderabad Latifabad','Hyderabad','Sindh',25.3960,68.3578,'critical','Unit 8, Latifabad'],
+['Peshawar University Rd','Peshawar','Khyber Pakhtunkhwa',34.0000,71.4800,'active','University Road'],
+['Peshawar Hayatabad','Peshawar','Khyber Pakhtunkhwa',33.9800,71.4200,'attention','Phase 3, Hayatabad'],
+['Abbottabad Mall Rd','Abbottabad','Khyber Pakhtunkhwa',34.1688,73.2215,'active','Mall Road'],
+['Quetta Jinnah Rd','Quetta','Balochistan',30.1798,66.9750,'attention','Jinnah Road']];
+const MGR=['Ahmed Raza','Sana Malik','Bilal Chaudhry','Ayesha Khan','Usman Tariq','Hina Siddiqui','Faisal Mehmood','Mariam Aslam','Kamran Akhtar'];
+const PROD=['Basmati Rice 5kg','Cooking Oil 3L','Tea 900g','Sugar 5kg','Detergent 2kg','Milk Pack 1L','Atta 10kg','Shampoo 650ml','Biscuit Carton','Dates 1kg'];
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const BR=SEED.map((s,i)=>{const r=rng(i*97+13),R=(a,b)=>a+r()*(b-a),I=(a,b)=>Math.round(R(a,b)),mul={high:1.35,active:1,attention:.7,critical:.45}[s[5]];
+ const base=R(14,26)*mul,rev=MON.map((m,k)=>+(base*(1+.12*Math.sin(k/2)+k*.008+R(-.05,.05))).toFixed(1)),exp=rev.map(v=>+(v*R(.68,.86)).toFixed(1));
+ const emp=I(22,70),tp=I(900,3200),low=I(8,70),oos=I(0,22),st=Math.max(0,100-I(0,18)),
+ cu=I(9e3,4e4),vis=I(180,900);
+ const mr=rev[11],me=exp[11],tr=rev.reduce((a,b)=>a+b,0);
+ return{id:'BS-'+String(i+1).padStart(3,'0'),name:s[0],city:s[1],region:s[2],lat:s[3],lng:s[4],status:s[5],addr:s[6]+', '+s[1],mgr:MGR[i%9],tel:'+92 3'+I(0,4)+I(0,9)+' '+I(1e6,9.9e6),open:`${I(2012,2023)}-${String(I(1,12)).padStart(2,'0')}-${String(I(1,28)).padStart(2,'0')}`,
+ score:Math.round(({high:90,active:78,attention:62,critical:41}[s[5]])+R(-5,5)),rev,exp,totalRev:tr,mRev:mr,mExp:me,profit:+(mr-me).toFixed(1),margin:+((mr-me)/mr*100).toFixed(1),growth:+((rev[11]/rev[5]-1)*100).toFixed(1),
+ inv:{total:tp,avail:Math.round(tp*R(.82,.95)),low,oos,value:+(R(18,60)*mul).toFixed(1),dist:[Math.round(tp*.62),low*3,low,oos],top:PROD.slice().sort(()=>r()-.5).slice(0,4).map(n=>[n,I(300,2400)]),lowList:PROD.slice().sort(()=>r()-.5).slice(0,4).map(n=>[n,I(2,14),I(20,60)])},
+ staff:{emp,mgrs:I(2,4),cash:Math.round(emp*.25),sales:Math.round(emp*.4),att:+R(86,98).toFixed(1),avail:+R(78,96).toFixed(0),shifts:[['Morning','08:00–16:00',Math.round(emp*.45)],['Evening','16:00–00:00',Math.round(emp*.4)],['Night','00:00–08:00',Math.round(emp*.15)]]},
+ infra:{size:['Small','Medium','Large'][I(0,2)],area:I(4000,16000),counters:I(5,18),storage:I(2000,9000),parking:r()>.25?'Available · '+I(15,80)+' bays':'Not available',cctv:r()>.15?'Online · '+I(12,40)+' cameras':'Partially offline',net:r()>.2?'Fiber · Stable':'Backup LTE',power:r()>.2?'Generator + UPS':'UPS only',maint:s[5]==='critical'?'Overdue':s[5]==='attention'?'Scheduled':'Up to date'},
+ cust:{total:cu,daily:vis,tx:I(8e3,3.2e4),avg:I(1800,4200),sat:+R(3.4,4.9).toFixed(1),ret:I(38,72),act:MON.map(()=>Math.round(vis*R(.7,1.3)))}}});
+// ---------- State ----------
+const S={sel:null,region:'',status:'',q:'',pinned:false};
+const fmtM=v=>'PKR '+v.toLocaleString(undefined,{maximumFractionDigits:1})+'M',fmtN=v=>v.toLocaleString();
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const badge=s=>`<span class="badge" style="background:${ST[s][1]}22;color:${ST[s][1]}">${ST[s][0]}</span>`;
+const kp=(l,v,ic,t,d)=>`<div class="kpi"><div class="l"><i data-lucide="${ic}"></i>${l}</div><div class="v">${v}</div>${t?`<div class="t ${d?'d':''}">${t}</div>`:''}</div>`;
+const rw=(ic,k,v)=>`<div class="row"><i data-lucide="${ic}"></i><span class="k">${k}</span><span class="v">${v}</span></div>`;
+function filtered(ignoreQ){const q=S.q.trim().toLowerCase();return BR.filter(b=>(!S.region||b.region===S.region)&&(!S.status||b.status===S.status)&&(ignoreQ||!q||[b.name,b.id,b.city,b.region,b.mgr].some(x=>x.toLowerCase().includes(q))))}
+const hl=t=>{const q=S.q.trim();if(!q)return esc(t);return esc(t).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[&<>"]/g,'')+')','ig'),'<mark>$1</mark>')};
+// ---------- Charts ----------
+Chart.defaults.color='#A49AB8';Chart.defaults.font.family="'Plus Jakarta Sans',sans-serif";Chart.defaults.font.size=10.5;Chart.defaults.maintainAspectRatio=false;
+const PAL=['#8B5CF6','#A78BFA','#C4B5FD','#6D3FD6','#DDD6FE'],tip={backgroundColor:'#201A32',borderColor:'rgba(167,139,250,.3)',borderWidth:1,titleColor:'#F5F3FF',bodyColor:'#C4B5FD',padding:8,cornerRadius:8};
+const noGrid={x:{grid:{display:false},border:{display:false}},y:{grid:{color:'rgba(167,139,250,.07)'},border:{display:false}}};
+function mk(el,cfg,store){if(store&&store[el.id])store[el.id].destroy();const c=new Chart(el,cfg);if(store)store[el.id]=c;return c}
+const SC={};
+function sideCharts(){const L=filtered(true),rs=REGIONS.filter(r=>L.some(b=>b.region===r)),cnt=rs.map(r=>L.filter(b=>b.region===r).length),tot=cnt.reduce((a,b)=>a+b,0)||1;
+ mk($('c1'),{type:'doughnut',data:{labels:rs,datasets:[{data:cnt,backgroundColor:PAL,borderColor:'#171326',borderWidth:2}]},options:{cutout:'62%',plugins:{legend:{position:'right',labels:{boxWidth:8,boxHeight:8,usePointStyle:true,font:{size:10}}},tooltip:{...tip,callbacks:{label:c=>` ${c.raw} branches (${Math.round(c.raw/tot*100)}%)`}}}}},SC);
+ mk($('c2'),{type:'bar',data:{labels:rs.map(r=>r.replace('Khyber Pakhtunkhwa','KP').replace('Islamabad Capital Territory','ICT').replace('Balochistan','Bal.')),datasets:[{data:rs.map(r=>+L.filter(b=>b.region===r).reduce((a,b)=>a+b.totalRev,0).toFixed(0)),backgroundColor:'#8B5CF6',borderRadius:6,maxBarThickness:28}]},options:{scales:noGrid,plugins:{legend:{display:false},tooltip:tip}}},SC)}
+// ---------- Sidebar ----------
+function renderSide(){const L=filtered(),all=filtered(true);
+ $('regs').innerHTML=[['','All Regions',BR.length],...REGIONS.map(r=>[r,r.replace('Islamabad Capital Territory','Islamabad (ICT)'),BR.filter(b=>b.region===r).length])].map(([v,l,n])=>`<button class="chip ${S.region===v?'on':''}" data-r="${v}">${l}<em>${n}</em></button>`).join('');
+ $('list').innerHTML=L.length?L.map(b=>`<button class="bi ${S.sel===b.id?'sel':''}" data-id="${b.id}"><span class="st" style="background:${ST[b.status][1]}"></span><div><b>${hl(b.name)}</b><small>${hl(b.id)} · ${hl(b.city)} · ${hl(b.region)}</small></div><span class="s">${ST[b.status][0]}</span></button>`).join(''):`<div class="empty">No branch matches your filters.<br>Try another name, ID or city.</div>`;
+ $('bc').textContent=L.length+' shown';$('qc').hidden=!S.q;$('rl').textContent=S.region||'All Regions';
+ const act=all.filter(b=>b.status!=='critical').length,rev=all.reduce((a,b)=>a+b.totalRev,0);
+ $('kpis').innerHTML=kp('Total branches',all.length,'store')+kp('Active',act,'check-circle-2',Math.round(act/(all.length||1)*100)+'% of total')+kp('Inactive',all.length-act,'alert-triangle','Critical status',1)+kp('Total revenue','PKR '+(rev/1000).toFixed(2)+'B','banknote','12-month total');
+ sideCharts();ico();drawMarkers()}
+// ---------- Map ----------
+const map=L.map('map',{zoomControl:false,attributionControl:true,minZoom:4}).setView([30.3,70],5);
+let tileLayer;let tileErrorCount=0;const mapStatus=document.getElementById('mapStatus'),mapStatusText=document.getElementById('mapStatusText'),retryMap=document.getElementById('retryMap');function setMapStatus(state,message){mapStatus.classList.toggle('hidden',state==='ready');mapStatus.classList.toggle('error',state==='error');mapStatusText.textContent=message;retryMap.hidden=state!=='error';const spinner=mapStatus.querySelector('.spinner');spinner.style.display=state==='loading'?'block':'none'}function loadDarkTiles(){tileErrorCount=0;setMapStatus('loading','Loading dark map… if your connection is slow, this can take a moment.');if(tileLayer)map.removeLayer(tileLayer);tileLayer=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:16,attribution:'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',crossOrigin:true});tileLayer.on('tileload',()=>{tileErrorCount=0;setMapStatus('ready','')});tileLayer.on('tileerror',()=>{tileErrorCount++;if(tileErrorCount>=3)setMapStatus('error','Map tiles are taking too long or are unavailable. Check your connection and retry.')});tileLayer.addTo(map);setTimeout(()=>{if(tileErrorCount>=3)setMapStatus('error','Map tiles are taking too long or are unavailable. Check your connection and retry.');else if(mapStatus.classList.contains('hidden')===false&&tileErrorCount===0)setMapStatus('ready','')},9000)}loadDarkTiles();retryMap.addEventListener('click',loadDarkTiles);
+L.control.zoom({position:'topright'}).addTo(map);
+const Ctl=L.Control.extend({options:{position:'topright'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar');[['maximize','Fullscreen',()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()],['scan','Fit all branches',fit],['rotate-ccw','Reset map view',()=>{map.setView([30.3,70],5);}]].forEach(([i,t,f])=>{const a=L.DomUtil.create('a','',d);a.href='#';a.title=t;a.setAttribute('aria-label',t);a.innerHTML=`<i data-lucide="${i}"></i>`;L.DomEvent.on(a,'click',e=>{L.DomEvent.stop(e);f()})});L.DomEvent.disableClickPropagation(d);return d}});
+new Ctl().addTo(map);
+const cl=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40}).addTo(map),MK={};
+const icon=(b,s)=>L.divIcon({className:'',html:`<div class="mk ${s?'sel':''}" style="background:${ST[b.status][1]}"></div>`,iconSize:[18,18]});
+function drawMarkers(){cl.clearLayers();Object.keys(MK).forEach(k=>delete MK[k]);filtered().forEach(b=>{const m=L.marker([b.lat,b.lng],{icon:icon(b,S.sel===b.id),title:b.name}).bindTooltip(`<b>${esc(b.name)}</b><br>${b.id} · ${b.city}<br>${ST[b.status][0]}`,{direction:'top',offset:[0,-8]});m.on('click',()=>select(b.id));MK[b.id]=m;cl.addLayer(m)})}
+function fit(){const L2=filtered();if(L2.length)map.fitBounds(L2.map(b=>[b.lat,b.lng]),{padding:[60,60],maxZoom:11})}
+// ---------- Floating windows ----------
+const W={},WD=[
+['ov','Branch Overview','building-2',[0,0]],['fin','Financial Performance','line-chart',[1,0]],['inv','Inventory & Stock','package',[2,0]],
+['stf','Staff & Operations','users',[0,1]],['inf','Infrastructure','server',[1,1]],['cus','Customer Analytics','shopping-bag',[2,1]]];
+let zTop=1000;const wrap=()=>$('mapw');
+const R={
+ov:b=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><b style="font-size:15px">${esc(b.name)}</b><div style="color:var(--tx2);font-size:11.5px">${b.id}</div></div>${badge(b.status)}</div>
+ <div class="g2">${kp('Performance score',b.score+'/100','gauge')}${kp('Location',b.city,'map-pin',b.lat.toFixed(3)+', '+b.lng.toFixed(3))}</div>`+rw('globe','Region',b.region)+rw('map','Address',esc(b.addr))+rw('user','Manager',b.mgr)+rw('phone','Contact',b.tel)+rw('calendar','Opened',b.open)+rw('activity','Status',ST[b.status][0]),
+ fin:b=>`<div class="g2">${kp('Total revenue (12M)',fmtM(+b.totalRev.toFixed(0)),'banknote')}${kp('Monthly revenue',fmtM(b.mRev),'trending-up')}${kp('Monthly expenses',fmtM(b.mExp),'receipt')}${kp('Net profit',fmtM(b.profit),'wallet')}${kp('Profit margin',b.margin+'%','percent')}${kp('Growth (6M)',(b.growth>0?'+':'')+b.growth+'%','arrow-up-right',null)}</div><h4>Revenue trend (PKR M)</h4><div class="ch"><canvas id="f1"></canvas></div><h4>Expenses vs profit</h4><div class="ch"><canvas id="f2"></canvas></div>`,
+ inv:b=>`<div class="g2">${kp('Total products',fmtN(b.inv.total),'boxes')}${kp('Available stock',fmtN(b.inv.avail),'check')}${kp('Low stock',b.inv.low,'alert-circle')}${kp('Out of stock',b.inv.oos,'x-circle')}${kp('Inventory value',fmtM(b.inv.value),'landmark')}</div><h4>Stock distribution</h4><div class="ch"><canvas id="i1"></canvas></div><h4>Top-selling products</h4><table><tr><th>Product</th><th>Units sold</th></tr>${b.inv.top.map(p=>`<tr><td>${p[0]}</td><td>${fmtN(p[1])}</td></tr>`).join('')}</table><h4>Low-stock items</h4><table><tr><th>Product</th><th>Left</th><th>Min</th></tr>${b.inv.lowList.map(p=>`<tr><td>${p[0]}</td><td style="color:var(--warn)">${p[1]}</td><td>${p[2]}</td></tr>`).join('')}</table>`,
+ stf:b=>`<div class="g2">${kp('Employees',b.staff.emp,'users')}${kp('Managers',b.staff.mgrs,'briefcase')}${kp('Cashiers',b.staff.cash,'credit-card')}${kp('Sales reps',b.staff.sales,'handshake')}</div><h4>Attendance · ${b.staff.att}%</h4><div class="bar"><i style="width:${b.staff.att}%"></i></div><h4>Staff availability · ${b.staff.avail}%</h4><div class="bar"><i style="width:${b.staff.avail}%"></i></div><div style="margin:10px 0 6px">${badge(b.status)}</div><h4>Shifts</h4><table><tr><th>Shift</th><th>Hours</th><th>Staff</th></tr>${b.staff.shifts.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td></tr>`).join('')}</table>`,
+ inf:b=>{const f=b.infra,ok=t=>/Online|Available|Stable|Generator|Up to date|Fiber/.test(t)?'var(--ok)':'var(--warn)';return rw('ruler','Branch size',f.size)+rw('square','Floor area',fmtN(f.area)+' sq ft')+rw('scan-barcode','Counters',f.counters)+rw('warehouse','Storage capacity',fmtN(f.storage)+' units')+rw('car','Parking',`<span style="color:${ok(f.parking)}">${f.parking}</span>`)+rw('cctv','CCTV',`<span style="color:${ok(f.cctv)}">${f.cctv}</span>`)+rw('wifi','Internet',`<span style="color:${ok(f.net)}">${f.net}</span>`)+rw('zap','Power backup',`<span style="color:${ok(f.power)}">${f.power}</span>`)+rw('wrench','Maintenance',`<span style="color:${f.maint==='Overdue'?'var(--bad)':ok(f.maint)}">${f.maint}</span>`)},
+ cus:b=>`<div class="g2">${kp('Total customers',fmtN(b.cust.total),'users-round')}${kp('Daily visitors',fmtN(b.cust.daily),'footprints')}${kp('Monthly transactions',fmtN(b.cust.tx),'repeat')}${kp('Avg. transaction','PKR '+fmtN(b.cust.avg),'receipt')}${kp('Satisfaction',b.cust.sat+' / 5','smile')}${kp('Returning',b.cust.ret+'%','refresh-cw')}</div><h4>Daily visitors by month</h4><div class="ch"><canvas id="u1"></canvas></div>`};
+const CH={
+ fin:(b,s)=>{mk($('f1'),{type:'line',data:{labels:MON,datasets:[{data:b.rev,borderColor:'#A78BFA',backgroundColor:'rgba(139,92,246,.2)',fill:true,tension:.35,pointRadius:0,pointHoverRadius:4}]},options:{scales:noGrid,plugins:{legend:{display:false},tooltip:tip}}},s);
+  mk($('f2'),{type:'bar',data:{labels:MON,datasets:[{label:'Expenses',data:b.exp,backgroundColor:'#6D3FD6',borderRadius:3},{label:'Profit',data:b.rev.map((v,i)=>+(v-b.exp[i]).toFixed(1)),backgroundColor:'#C4B5FD',borderRadius:3}]},options:{scales:noGrid,plugins:{legend:{labels:{boxWidth:8,boxHeight:8}},tooltip:tip}}},s)},
+ inv:(b,s)=>mk($('i1'),{type:'doughnut',data:{labels:['In stock','Adequate buffer','Low stock','Out of stock'],datasets:[{data:b.inv.dist,backgroundColor:['#8B5CF6','#C4B5FD','#FBBF24','#F87171'],borderColor:'#171326',borderWidth:2}]},options:{cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:8,boxHeight:8,font:{size:10}}},tooltip:tip}}},s),
+ cus:(b,s)=>mk($('u1'),{type:'line',data:{labels:MON,datasets:[{data:b.cust.act,borderColor:'#34D399',backgroundColor:'rgba(52,211,153,.12)',fill:true,tension:.35,pointRadius:0,pointHoverRadius:4}]},options:{scales:noGrid,plugins:{legend:{display:false},tooltip:tip}}},s)};
+function mkWin(d){const [id,title,ic]=d,el=document.createElement('div');el.className='win hid';el.id='w-'+id;
+ el.innerHTML=`<div class="wh"><i data-lucide="${ic}"></i><span>${title}</span><small></small><div class="wb"><button data-a="mn" title="Minimize"><i data-lucide="minus"></i></button><button data-a="mx" title="Maximize"><i data-lucide="maximize-2"></i></button><button data-a="x" title="Close"><i data-lucide="x"></i></button></div></div><div class="wc"></div>`+['n','s','e','w','ne','nw','se','sw'].map(x=>`<div class="rz" data-d="${x}"></div>`).join('');
+ wrap().appendChild(el);const w=W[id]={id,el,x:0,y:0,w:320,h:260,open:false,mn:false,mx:false,prev:null,ch:{}};
+ el.addEventListener('pointerdown',()=>focus(id),true);
+ el.querySelector('.wb').onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='mn')minimize(id);if(a==='mx')maximize(id);if(a==='x')closeWin(id)};
+ el.querySelector('.wh').ondblclick=e=>{if(!e.target.closest('button'))maximize(id)};
+ el.querySelector('.wh').addEventListener('pointerdown',e=>{if(e.target.closest('button')||w.mx||e.button)return;drag(e,w,(dx,dy,s)=>{w.x=s.x+dx;w.y=s.y+dy;clamp(w);place(w)})});
+ el.querySelectorAll('.rz').forEach(h=>h.addEventListener('pointerdown',e=>{if(w.mx||w.mn)return;e.stopPropagation();const d=h.dataset.d;drag(e,w,(dx,dy,s)=>{const mw=Math.min(240,wrap().clientWidth-8),mh=140;
+  if(d.includes('e'))w.w=Math.max(mw,s.w+dx);if(d.includes('s'))w.h=Math.max(mh,s.h+dy);
+  if(d.includes('w')){w.w=Math.max(mw,s.w-dx);w.x=s.x+s.w-w.w}if(d.includes('n')){w.h=Math.max(mh,s.h-dy);w.y=s.y+s.h-w.h}clamp(w);place(w)})}));
+ return w}
+function drag(e,w,fn){e.preventDefault();const sx=e.clientX,sy=e.clientY,s={x:w.x,y:w.y,w:w.w,h:w.h};document.body.style.userSelect='none';
+ const mv=ev=>fn(ev.clientX-sx,ev.clientY-sy,s),up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.body.style.userSelect='';resizeCharts(w)};
+ document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)}
+function clamp(w){const W_=wrap().clientWidth,H=wrap().clientHeight;w.w=Math.min(w.w,W_);w.h=Math.min(w.h,H);w.x=Math.max(0,Math.min(w.x,W_-Math.min(w.w,120)));w.y=Math.max(0,Math.min(w.y,H-36))}
+function place(w){const s=w.el.style;s.left=w.x+'px';s.top=w.y+'px';s.width=w.w+'px';s.height=w.h+'px';w.el.classList.toggle('mn',w.mn);w.el.classList.toggle('hid',!w.open)}
+function resizeCharts(w){Object.values(w.ch).forEach(c=>c.resize())}
+function focus(id){Object.values(W).forEach(w=>w.el.classList.toggle('foc',w.id===id));W[id].el.style.zIndex=++zTop}
+function fillWin(id){const w=W[id],b=BR.find(x=>x.id===S.sel);if(!b)return;const c=w.el.querySelector('.wc'),sc=c.scrollTop;w.el.querySelector('small').textContent=b.id;
+ Object.values(w.ch).forEach(x=>x.destroy());w.ch={};c.innerHTML=R[id](b);CH[id]?.(b,w.ch);c.scrollTop=sc;ico()}
+function openWin(id,keepLayout){const w=W[id];w.open=true;w.mn=false;if(!keepLayout&&!w.placed)defaultPos(w);fillWin(id);place(w);focus(id);resizeCharts(w);dock()}
+function closeWin(id){const w=W[id];w.open=false;w.mx=false;place(w);dock()}
+function minimize(id){const w=W[id];if(w.mx)maximize(id);w.mn=!w.mn;place(w);ico();setTimeout(()=>resizeCharts(w),50)}
+function maximize(id){const w=W[id];w.mn=false;if(!w.mx){w.prev={x:w.x,y:w.y,w:w.w,h:w.h};w.mx=true;w.x=0;w.y=0;w.w=wrap().clientWidth;w.h=wrap().clientHeight}else{w.mx=false;Object.assign(w,w.prev)}
+ place(w);w.el.querySelector('[data-a=mx]').innerHTML=`<i data-lucide="${w.mx?'minimize-2':'maximize-2'}"></i>`;ico();setTimeout(()=>resizeCharts(w),50);focus(id)}
+function defaultPos(w){const [c,r]=WD.find(d=>d[0]===w.id)[3],W_=wrap().clientWidth,H=wrap().clientHeight,mob=W_<700,ww=mob?W_-16:Math.min(340,Math.floor((W_-40)/3)),wh=mob?Math.round(H*.55):Math.min(280,Math.floor((H-110)/2));
+ w.w=ww;w.h=wh;w.x=mob?8+WD.findIndex(d=>d[0]===w.id)*6:Math.max(8,W_-(3-c)*(ww+10)-0);w.y=mob?12+WD.findIndex(d=>d[0]===w.id)*6:12+r*(wh+10);if(!mob)w.x=W_-(3-c)*(ww+10)+4;w.mx=false;w.placed=true;clamp(w)}
+const opened=()=>WD.map(d=>W[d[0]]).filter(w=>w.open);
+function layout(mode){const L2=opened();if(!L2.length)return;const W_=wrap().clientWidth,H=wrap().clientHeight-70;
+ if(mode==='reset'){WD.forEach(d=>{const w=W[d[0]];w.mn=false;w.mx=false;defaultPos(w);place(w);fillWin(d[0])});return}
+ if(mode==='cascade')L2.forEach((w,i)=>{w.mn=false;w.mx=false;w.w=Math.min(360,W_-40);w.h=Math.min(300,H-30);w.x=20+i*34;w.y=10+i*34;clamp(w);place(w);focus(w.id);resizeCharts(w)});
+ if(mode==='tile'){const n=L2.length,cols=W_<700?1:n>4?3:n>1?2:1,rows=Math.ceil(n/cols),cw=Math.floor(W_/cols),ch=Math.floor(H/rows);L2.forEach((w,i)=>{w.mn=false;w.mx=false;w.x=(i%cols)*cw;w.y=Math.floor(i/cols)*ch;w.w=cw-4;w.h=ch-4;place(w);resizeCharts(w)})}
+ if(mode==='min')L2.forEach(w=>{w.mn=true;place(w)});if(mode==='min')ico()}
+function dock(){document.querySelectorAll('#tb [data-w]').forEach(b=>b.classList.toggle('open',W[b.dataset.w].open))}
+function buildToolbar(){const act=[['open','layout-grid','Open all'],['close','square-x','Close all'],['min','minimize-2','Minimize all'],['cascade','layers','Cascade'],['tile','layout-dashboard','Tile'],['reset','rotate-ccw','Reset layout']];
+ $('tb').innerHTML=WD.map(d=>`<button data-w="${d[0]}" title="${d[1]}"><i data-lucide="${d[2]}"></i><span class="lb">${d[1].split(/[ &]+/)[0]}</span></button>`).join('')+'<span class="sep"></span>'+act.map(a=>`<button data-act="${a[0]}" title="${a[2]}"><i data-lucide="${a[1]}"></i><span class="lb">${a[2]}</span></button>`).join('');
+ $('tb').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.w){const id=b.dataset.w;if(!S.sel){toast();return}W[id].open&&!W[id].mn?(W[id].el.classList.contains('foc')?closeWin(id):focus(id)):openWin(id,true)}
+  else{const a=b.dataset.act;if(!S.sel){toast();return}if(a==='open'){WD.forEach(d=>openWin(d[0],true));layout('tile')}else if(a==='close')WD.forEach(d=>closeWin(d[0]));else layout(a)}}}
+function toast(){const t=document.createElement('div');t.textContent='Select a branch to open its windows.';t.style.cssText='position:absolute;top:14px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--p);padding:8px 14px;border-radius:10px;z-index:1400';wrap().appendChild(t);setTimeout(()=>t.remove(),1800)}
+// ---------- Selection ----------
+function select(id,fromList){const first=!S.sel||!opened().length;S.sel=id;const b=BR.find(x=>x.id===id);
+ map.flyTo([b.lat,b.lng],12,{duration:.8});Object.entries(MK).forEach(([k,m])=>m.setIcon(icon(BR.find(x=>x.id===k),k===id)));
+ document.querySelectorAll('.bi').forEach(el=>el.classList.toggle('sel',el.dataset.id===id));document.querySelector('.bi.sel')?.scrollIntoView({block:'nearest'});
+ if(first)WD.forEach(d=>openWin(d[0]));else opened().forEach(w=>fillWin(w.id));
+ if(innerWidth<=700)$('side').classList.add('col')}
+// ---------- Events ----------
+$('q').oninput=e=>{S.q=e.target.value;renderSide()};$('qc').onclick=()=>{S.q='';$('q').value='';renderSide();$('q').focus()};
+$('regs').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.region=b.dataset.r;renderSide();fit()};
+$('stf').onchange=e=>{S.status=e.target.value;renderSide();fit()};
+$('rs').onclick=()=>{S.region='';S.status='';S.q='';$('q').value='';$('stf').value='';renderSide();fit()};
+$('list').onclick=e=>{const b=e.target.closest('.bi');if(b)select(b.dataset.id)};
+$('sbt').onclick=()=>{$('side').classList.toggle('col');setTimeout(()=>{map.invalidateSize();sideCharts()},280)};
+addEventListener('resize',()=>{WD.forEach(d=>{const w=W[d[0]];if(w.mx){w.w=wrap().clientWidth;w.h=wrap().clientHeight}clamp(w);place(w)})});
+const tick=()=>$('clk').innerHTML=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+'<br>'+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+// ---------- Init ----------
+WD.forEach(mkWin);buildToolbar();tick();setInterval(tick,30000);
+if(innerWidth<=700)$('side').classList.add('col');
+renderSide();fit();ico();setTimeout(()=>{map.invalidateSize();$('ld').classList.add('x')},350);
+</script></body></html>
